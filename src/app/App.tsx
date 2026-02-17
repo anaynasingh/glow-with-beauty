@@ -117,7 +117,7 @@ export default function App() {
     } else if (tab === "appointments") {
       setScreen({ type: "appointments" });
     } else if (tab === "boutique") {
-      setScreen({ type: "boutique" });
+      setScreen({ type: "boutique" }); // Screen type remains 'boutique', only label changes
     }
   };
 

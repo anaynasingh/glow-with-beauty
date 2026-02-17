@@ -12,7 +12,7 @@ export function AdditionalServicesScreen({ onBack, onServiceClick }: AdditionalS
   const services = [
     { 
       id: 1, 
-      name: "At Home Beauty Services", 
+      name: "Beauty at Home", 
       icon: Home, 
       color: "#FF6B9D",
       description: "Professional beauty services at your home"
