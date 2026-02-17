@@ -1,4 +1,7 @@
-import { Home, Search, Calendar, User } from "lucide-react";
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
+import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
+import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded';
 
 interface BottomNavProps {
   activeTab: string;
@@ -7,10 +10,10 @@ interface BottomNavProps {
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const tabs = [
-    { id: "home", icon: Home, label: "Home" },
-    { id: "search", icon: Search, label: "Search" },
-    { id: "appointments", icon: Calendar, label: "Appointments" },
-    { id: "account", icon: User, label: "Account" },
+    { id: "home", icon: HomeRoundedIcon, label: "Home" },
+    { id: "services", icon: AutoAwesomeRoundedIcon, label: "Services" },
+    { id: "appointments", icon: EventNoteRoundedIcon, label: "Bookings" },
+    { id: "boutique", icon: StorefrontRoundedIcon, label: "Boutique" },
   ];
 
   return (

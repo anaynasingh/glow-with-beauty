@@ -308,6 +308,180 @@ export const salons = [
 
 export const appointments = [];
 
+// Salon Owner Structures
+export interface SalonOwner {
+  id: number;
+  userId: number;
+  shopName: string;
+  email: string;
+  phone: string;
+  address: string;
+  registrationNumber: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+  approvedAt?: string;
+  image?: string;
+  description?: string;
+  timings?: {
+    monday: { open: string; close: string };
+    tuesday: { open: string; close: string };
+    wednesday: { open: string; close: string };
+    thursday: { open: string; close: string };
+    friday: { open: string; close: string };
+    saturday: { open: string; close: string };
+    sunday: { open: string; close: string };
+  };
+  staff?: Staff[];
+  offers?: Offer[];
+  products?: Product[];
+  earnings?: {
+    total: number;
+    thisMonth: number;
+    thisWeek: number;
+  };
+}
+
+export interface Staff {
+  id: number;
+  name: string;
+  specialization: string;
+  experience: string;
+  phone: string;
+  email: string;
+  joinDate: string;
+}
+
+export interface Offer {
+  id: number;
+  title: string;
+  description: string;
+  discount: number;
+  validFrom: string;
+  validTill: string;
+  applicableServices: number[];
+}
+
+export interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  category: string;
+}
+
+// Mock Salon Owners Data
+export const salonOwners: SalonOwner[] = [
+  {
+    id: 1,
+    userId: 101,
+    shopName: "Glamour Studio",
+    email: "owner@glamour.com",
+    phone: "9876543210",
+    address: "123 Fashion Street, Downtown",
+    registrationNumber: "GST12345ABC001",
+    status: "approved",
+    createdAt: "2025-01-15",
+    approvedAt: "2025-01-20",
+    image: "salon-interior",
+    description: "Premier beauty destination",
+    timings: {
+      monday: { open: "10:00 AM", close: "9:00 PM" },
+      tuesday: { open: "10:00 AM", close: "9:00 PM" },
+      wednesday: { open: "10:00 AM", close: "9:00 PM" },
+      thursday: { open: "10:00 AM", close: "9:00 PM" },
+      friday: { open: "10:00 AM", close: "10:00 PM" },
+      saturday: { open: "10:00 AM", close: "10:00 PM" },
+      sunday: { open: "11:00 AM", close: "8:00 PM" },
+    },
+    staff: [
+      { id: 1, name: "Priya Sharma", specialization: "Hair Styling", experience: "8 years", phone: "9111111111", email: "priya@glamour.com", joinDate: "2020-05-10" },
+      { id: 2, name: "Raj Malhotra", specialization: "Hair Color", experience: "5 years", phone: "9111111112", email: "raj@glamour.com", joinDate: "2022-03-15" },
+    ],
+    offers: [
+      { id: 1, title: "20% off on Hair Services", description: "Get 20% discount on all hair services", discount: 20, validFrom: "2026-02-01", validTill: "2026-02-28", applicableServices: [1, 2, 3] },
+    ],
+    earnings: {
+      total: 125000,
+      thisMonth: 15000,
+      thisWeek: 3500,
+    },
+  },
+  {
+    id: 2,
+    userId: 102,
+    shopName: "Bella Beauty Lounge",
+    email: "owner@bella.com",
+    phone: "9876543211",
+    address: "456 Style Avenue, Central Plaza",
+    registrationNumber: "GST12345ABC002",
+    status: "approved",
+    createdAt: "2025-01-18",
+    approvedAt: "2025-01-22",
+    timings: {
+      monday: { open: "11:00 AM", close: "8:00 PM" },
+      tuesday: { open: "11:00 AM", close: "8:00 PM" },
+      wednesday: { open: "11:00 AM", close: "8:00 PM" },
+      thursday: { open: "11:00 AM", close: "8:00 PM" },
+      friday: { open: "11:00 AM", close: "9:00 PM" },
+      saturday: { open: "10:00 AM", close: "9:00 PM" },
+      sunday: { open: "12:00 PM", close: "7:00 PM" },
+    },
+    earnings: {
+      total: 98000,
+      thisMonth: 12000,
+      thisWeek: 2800,
+    },
+  },
+];
+
+// Pending Salon Registrations (awaiting verification)
+export const pendingSalonRegistrations: SalonOwner[] = [
+  {
+    id: 3,
+    userId: 103,
+    shopName: "New Era Salon",
+    email: "owner@newera.com",
+    phone: "9876543212",
+    address: "789 New Street, East Zone",
+    registrationNumber: "GST12345ABC003",
+    status: "pending",
+    createdAt: "2026-02-10",
+  },
+  {
+    id: 4,
+    userId: 104,
+    shopName: "Premium Cuts Barbershop",
+    email: "owner@premiumcuts.com",
+    phone: "9876543213",
+    address: "321 Barber Lane, North Area",
+    registrationNumber: "GST12345ABC004",
+    status: "pending",
+    createdAt: "2026-02-11",
+  },
+];
+
+// Admin Structure
+export interface Admin {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+  role: "super-admin" | "moderator";
+  createdAt: string;
+}
+
+export const admins: Admin[] = [
+  {
+    id: 1,
+    username: "admin",
+    email: "admin@beautyapp.com",
+    password: "admin123", // In production, this should be hashed
+    role: "super-admin",
+    createdAt: "2025-01-01",
+  },
+];
+
 export const timeSlots = [
   "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
   "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",

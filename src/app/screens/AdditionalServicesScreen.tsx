@@ -33,13 +33,6 @@ export function AdditionalServicesScreen({ onBack, onServiceClick }: AdditionalS
     },
     {
       id: 4,
-      name: "Boutique",
-      icon: ShoppingBag,
-      color: "#E6C97A",
-      description: "Fashion and clothing"
-    },
-    {
-      id: 5,
       name: "More Services",
       icon: MoreHorizontal,
       color: "#8A8A8A",
