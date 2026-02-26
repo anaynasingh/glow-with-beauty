@@ -10,7 +10,8 @@ export function ServiceCard({ name, image, onClick }: ServiceCardProps) {
   return (
     <button
       onClick={onClick}
-      className="relative flex-shrink-0 w-[140px] h-[180px] rounded-2xl overflow-hidden active:scale-95 transition-transform shadow-lg"
+      className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform"
+      style={{ minWidth: 0 }}
     >
       {/* Background Image */}
       <ImageWithFallback
@@ -18,13 +19,11 @@ export function ServiceCard({ name, image, onClick }: ServiceCardProps) {
         alt={name}
         className="absolute inset-0 w-full h-full object-cover"
       />
-      
       {/* Purple Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#3D2C8D]/95 via-[#6C4AB6]/50 to-transparent" />
-      
+      <div className="absolute inset-0 bg-gradient-to-t from-[#3D2C8D]/90 via-[#6C4AB6]/60 to-transparent" />
       {/* Service Name */}
-      <div className="absolute bottom-0 left-0 right-0 p-4">
-        <span className="text-white drop-shadow-lg">
+      <div className="absolute bottom-0 left-0 right-0 pb-2 flex items-end justify-center">
+        <span className="text-white font-semibold text-sm drop-shadow-lg text-center leading-tight">
           {name}
         </span>
       </div>

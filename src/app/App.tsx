@@ -5,6 +5,7 @@ import { SignUpScreen } from "./screens/SignUpScreen";
 import { LoginRoleSelectionScreen } from "./screens/LoginRoleSelectionScreen";
 import { SalonOwnerLoginScreen } from "./screens/SalonOwnerLoginScreen";
 import { HomeScreen } from "./screens/HomeScreen";
+import { CategoryScreen } from "./screens/CategoryScreen";
 import { ServiceListingScreen } from "./screens/ServiceListingScreen";
 import { SalonDetailScreen } from "./screens/SalonDetailScreen";
 import { BookingServiceScreen } from "./screens/BookingServiceScreen";
@@ -55,6 +56,7 @@ type Screen =
   | { type: "login" }
   | { type: "sign-up" }
   | { type: "home" }
+  | { type: "category"; categoryName: string }
   | { type: "service-listing"; serviceName: string }
   | { type: "salon-detail"; salonId: number }
   | { type: "booking-service"; salonId: number }
@@ -215,8 +217,119 @@ export default function App() {
           }
           onAccountClick={() => {
             setScreen({ type: "account" });
-            setActiveTab("home"); // Keep home tab active since account is not in nav
+            setActiveTab("home");
           }}
+          onCategoryClick={(categoryName) => {
+            setScreen({ type: "category", categoryName });
+          }}
+        />
+      )}
+
+      {screen.type === "category" && (
+        <CategoryScreen
+          categoryName={screen.categoryName}
+          subcategories={(() => {
+            // Both men and women categories
+            const menCategories = [
+              {
+                name: "Beard",
+                image: "https://images.unsplash.com/photo-1621607512022-6aecc4fed814?auto=format&fit=crop&w=400&q=80",
+                subcategories: [
+                  { name: "Beard Grooming", image: "https://images.unsplash.com/photo-1621607512022-6aecc4fed814?auto=format&fit=crop&w=400&q=80" },
+                  { name: "Beard Trimming", image: "https://tse1.mm.bing.net/th/id/OIP.nNk4WkJf15U9xKJ1RS1KPwHaE7?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" },
+                ],
+              },
+              {
+                name: "Hair",
+                image: "https://tse1.explicit.bing.net/th/id/OIP.hgRSJdaxN1c6UZ63pHR4VgHaD4?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3",
+                subcategories: [
+                  { name: "Haircut", image: "https://tse1.explicit.bing.net/th/id/OIP.hgRSJdaxN1c6UZ63pHR4VgHaD4?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" },
+                  { name: "Hair Coloring", image: "https://tse3.mm.bing.net/th/id/OIP.Gq1i64GgOt_mnheWYLIPsgHaE7?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" },
+                ],
+              },
+              {
+                name: "Massage",
+                image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/dpr_2,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/growth/luminosity/1660029164522-d7a9e5.png",
+                subcategories: [
+                  { name: "Head Massage", image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/dpr_2,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/growth/luminosity/1660029164522-d7a9e5.png" },
+                  { name: "Face Massage", image: "https://thumbs.dreamstime.com/b/man-receiving-head-massage-medical-office-51614593.jpg" },
+                ],
+              },
+              {
+                name: "Shaving",
+                image: "https://tse4.mm.bing.net/th/id/OIP.psUDhiH06F70GevV7F2e0QHaE8?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3",
+                subcategories: [
+                  { name: "Shaving", image: "https://tse4.mm.bing.net/th/id/OIP.psUDhiH06F70GevV7F2e0QHaE8?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" },
+                ],
+              },
+              {
+                name: "Eyebrow",
+                image: "https://browheaven.com/wp-content/uploads/2022/03/2-1024x577.png",
+                subcategories: [
+                  { name: "Eyebrow Plucking", image: "https://browheaven.com/wp-content/uploads/2022/03/2-1024x577.png" },
+                ],
+              },
+            ];
+            const womenCategories = [
+              {
+                name: "Hair",
+                image: "https://images.unsplash.com/photo-1659036354224-48dd0a9a6b86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+                subcategories: [
+                  { name: "Hair Style", image: "https://images.unsplash.com/photo-1659036354224-48dd0a9a6b86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                  { name: "Hair Color", image: "https://images.unsplash.com/photo-1605980625982-b128a7e7fde2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                  { name: "Haircut & Style", image: "https://images.unsplash.com/photo-1654097801176-cb1795fd0c5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                  { name: "Keratin Hair Spa", image: "https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" },
+                  { name: "Balayage Hair Color", image: "https://images.pexels.com/photos/8468036/pexels-photo-8468036.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" },
+                ],
+              },
+              {
+                name: "Nails",
+                image: "https://images.unsplash.com/photo-1737214475335-8ed64d91f473?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+                subcategories: [
+                  { name: "Nail Art", image: "https://images.unsplash.com/photo-1737214475335-8ed64d91f473?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                  { name: "Mani Pedi", image: "https://images.unsplash.com/photo-1737214475335-8ed64d91f473?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                  { name: "Russian Manicure", image: "https://images.pexels.com/photos/3997383/pexels-photo-3997383.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" },
+                ],
+              },
+              {
+                name: "Face",
+                image: "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+                subcategories: [
+                  { name: "Facial", image: "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                  { name: "Glass Skin Facial", image: "https://images.pexels.com/photos/5069432/pexels-photo-5069432.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" },
+                  { name: "Skincare", image: "https://images.unsplash.com/photo-1608571899793-a1c0c27a7555?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                ],
+              },
+              {
+                name: "Makeup",
+                image: "https://images.unsplash.com/photo-1709477542149-f4e0e21d590b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+                subcategories: [
+                  { name: "Makeup", image: "https://images.unsplash.com/photo-1709477542149-f4e0e21d590b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                  { name: "Bridal Makeup", image: "https://images.unsplash.com/photo-1709477542149-f4e0e21d590b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                ],
+              },
+              {
+                name: "Massage",
+                image: "https://images.unsplash.com/photo-1598901986949-f593ff2a31a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+                subcategories: [
+                  { name: "Massage", image: "https://images.unsplash.com/photo-1598901986949-f593ff2a31a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                ],
+              },
+              {
+                name: "Waxing",
+                image: "https://images.unsplash.com/photo-1744722293334-7c57f57c49ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+                subcategories: [
+                  { name: "Waxing", image: "https://images.unsplash.com/photo-1744722293334-7c57f57c49ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
+                ],
+              },
+            ];
+            const found =
+              (screen.categoryName && menCategories.find((cat) => cat.name === screen.categoryName)) ||
+              (screen.categoryName && womenCategories.find((cat) => cat.name === screen.categoryName));
+            return found ? found.subcategories : [];
+          })()}
+          onBack={() => setScreen({ type: "home" })}
+          onServiceClick={(serviceName) => setScreen({ type: "service-listing", serviceName })}
         />
       )}
 
