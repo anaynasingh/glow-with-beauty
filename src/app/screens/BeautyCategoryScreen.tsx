@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
-import { services } from "../data/mockData";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import beautyAtHomePhoto from "../../images/beautyathome-photo.png";
 
 // Top categories for horizontal scroll
 const categoriesTop = [
@@ -19,7 +19,7 @@ const categoriesTop = [
   "Haircut & Style",
 ];
 
-// Example sectioned data (normally from API)
+// Example sectioned data (all images replaced with beautyAtHomePhoto)
 const sections = [
   {
     key: "Waxing",
@@ -33,8 +33,7 @@ const sections = [
         price: 599,
         duration: "45 mins",
         desc: ["Rica/normal wax options", "Experienced professionals"],
-        image: services.find((s) => s.name.toLowerCase().includes("waxing"))
-          ?.image,
+        image: beautyAtHomePhoto,
         options: 4,
       },
       {
@@ -45,8 +44,7 @@ const sections = [
         price: 699,
         duration: "50 mins",
         desc: ["Painless experience", "Long-lasting results"],
-        image: services.find((s) => s.name.toLowerCase().includes("waxing"))
-          ?.image,
+        image: beautyAtHomePhoto,
         options: 3,
       },
     ],
@@ -63,8 +61,7 @@ const sections = [
         price: 999,
         duration: "60 mins",
         desc: ["Glow & radiance", "Premium products"],
-        image: services.find((s) => s.name.toLowerCase().includes("facial"))
-          ?.image,
+        image: beautyAtHomePhoto,
         options: 5,
       },
       {
@@ -75,8 +72,7 @@ const sections = [
         price: 1299,
         duration: "70 mins",
         desc: ["Glass skin effect", "Hydrating routine"],
-        image: services.find((s) => s.name.toLowerCase().includes("korean"))
-          ?.image,
+        image: beautyAtHomePhoto,
         options: 2,
       },
     ],
@@ -96,8 +92,7 @@ const sections = [
           reviews: 60,
           price: 799,
           desc: ["Chip-resistant", "Glossy finish"],
-          image: services.find((s) => s.name.toLowerCase().includes("nail art"))
-            ?.image,
+          image: beautyAtHomePhoto,
           options: 6,
         },
         {
@@ -108,8 +103,7 @@ const sections = [
           reviews: 45,
           price: 699,
           desc: ["Quick dry", "Vibrant colors"],
-          image: services.find((s) => s.name.toLowerCase().includes("nail art"))
-            ?.image,
+          image: beautyAtHomePhoto,
           options: 4,
         },
       ],
@@ -128,8 +122,7 @@ const sections = [
         price: 799,
         duration: "40 mins",
         desc: ["Trendy styles", "Expert stylists"],
-        image: services.find((s) => s.name.toLowerCase().includes("haircut"))
-          ?.image,
+        image: beautyAtHomePhoto,
         options: 3,
       },
     ],

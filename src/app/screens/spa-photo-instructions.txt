@@ -1,0 +1,36 @@
+import spaPhoto from "../../images/spa-photo.png";
+
+// ...existing imports...
+// Replace all image fields in spaCategories and spaSections with spaPhoto
+
+const spaCategories = [
+  { key: "spa", label: "Spa", image: spaPhoto },
+  { key: "pain-relief", label: "Pain Relief", image: spaPhoto },
+  { key: "scrubs", label: "Skin Care Scrubs", image: spaPhoto },
+  { key: "post-natal", label: "Post Natal", image: spaPhoto },
+  { key: "add-ons", label: "Add-ons", image: spaPhoto },
+];
+
+const spaSections = [
+  {
+    key: "spa",
+    title: "Spa",
+    services: [
+      {
+        id: 1,
+        name: "Swedish Massage",
+        rating: 4.8,
+        reviews: 1200,
+        price: 1499,
+        duration: "60 mins",
+        desc: ["Relieves deep muscle tension", "Improves blood circulation"],
+        image: spaPhoto,
+        options: 4,
+      },
+      // ...repeat for all services, replacing image with spaPhoto...
+    ],
+  },
+  // ...repeat for all sections, replacing image with spaPhoto...
+];
+
+// ...rest of SpaCategoryScreen code...

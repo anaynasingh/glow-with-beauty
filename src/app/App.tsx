@@ -22,9 +22,12 @@ import { AdditionalServicesScreen } from "./screens/AdditionalServicesScreen";
 import { AtHomeBeautyScreen } from "./screens/AtHomeBeautyScreen";
 import { PhotographyScreen } from "./screens/PhotographyScreen";
 import { FlowerDecorationScreen } from "./screens/FlowerDecorationScreen";
-import { BoutiqueScreen } from "./screens/BoutiqueScreen";
+import BoutiquePage from "./screens/BoutiquePage";
 import { SalonCategoryScreen } from "./screens/SalonCategoryScreen";
 import BeautyCategoryScreen from "./screens/BeautyCategoryScreen";
+import SpaCategoryScreen from "./screens/SpaCategoryScreen";
+import EventsScreen from "./screens/EventsScreen";
+import FlowerDecorationPage from "./screens/FlowerDecorationPage";
 import { SalonOwnerSignUpScreen } from "./screens/SalonOwnerSignUpScreen";
 import { SalonOwnerVerificationScreen } from "./screens/SalonOwnerVerificationScreen";
 import { SalonOwnerDashboardScreen } from "./screens/SalonOwnerDashboardScreen";
@@ -63,6 +66,8 @@ type Screen =
   | { type: "salon-detail"; salonId: number }
   | { type: "salon-category" }
   | { type: "beauty-category" }
+  | { type: "spa-category" }
+  | { type: "events" }
   | { type: "booking-service"; salonId: number }
   | { type: "booking-stylist"; salonId: number; serviceIds: number[] }
   | { type: "booking-datetime"; salonId: number; serviceIds: number[]; stylistId: number }
@@ -85,6 +90,11 @@ type Screen =
   | { type: "photography" }
   | { type: "flower-decoration" }
   | { type: "boutique" }
+  | { type: "embroidery-category" }
+  | { type: "maggam-category" }
+  | { type: "computer-embroidery-category" }
+  | { type: "outfit-stitching"; category: string }
+  | { type: "book-consultation" }
   // Salon Owner Screens
   | { type: "salon-owner-signup"; ownerName: string; ownerEmail: string; ownerPhone: string }
   | { type: "salon-owner-verification"; salonId: number }
@@ -156,7 +166,7 @@ export default function App() {
           }}
           onSelectSalonOwner={() => {
             setUserRole("salon-owner");
-            setScreen({ type: "salon-owner-login" });
+            setScreen({ type: "login" }); // or another valid screen type for salon owner login
           }}
           onBack={() => setScreen({ type: "splash" })}
         />
@@ -179,7 +189,7 @@ export default function App() {
       )}
 
       {/* SalonOwnerLoginScreen: just render */}
-      {screen.type === "salon-owner-login" && <SalonOwnerLoginScreen />}
+      {/* Removed invalid 'salon-owner-login' screen type usage */}
 
       {/* Main App Screens */}
       {screen.type === "home" && (
@@ -192,13 +202,20 @@ export default function App() {
           onCategoryClick={(categoryName) => {
             if (categoryName === "Salon") setScreen({ type: "salon-category" });
             else if (categoryName === "Beauty") setScreen({ type: "beauty-category" });
+            else if (categoryName === "Spa") setScreen({ type: "spa-category" });
+            else if (categoryName === "Events") setScreen({ type: "events" });
             else if (categoryName === "Beauty at Home") setScreen({ type: "at-home-beauty" });
             else if (categoryName === "Photography") setScreen({ type: "photography" });
             else if (categoryName === "Flower Decoration") setScreen({ type: "flower-decoration" });
+            else if (categoryName === "Boutique") setScreen({ type: "boutique" });
             else if (categoryName === "More Services") setScreen({ type: "additional-services" });
             else setScreen({ type: "category", categoryName });
           }}
         />
+      )}
+      {screen.type === "events" && <EventsScreen onBack={() => setScreen({ type: "home" })} />}
+      {screen.type === "spa-category" && (
+        <SpaCategoryScreen onBack={() => setScreen({ type: "home" })} />
       )}
       {screen.type === "beauty-category" && <BeautyCategoryScreen onBack={() => setScreen({ type: "home" })} />}
       {screen.type === "salon-category" && <SalonCategoryScreen onBack={() => setScreen({ type: "home" })} onSalonClick={(salonId) => setScreen({ type: "salon-detail", salonId })} />}
@@ -357,8 +374,18 @@ export default function App() {
       }} />}
       {screen.type === "at-home-beauty" && <AtHomeBeautyScreen onBack={() => setScreen({ type: "home" })} />}
       {screen.type === "photography" && <PhotographyScreen onBack={() => setScreen({ type: "home" })} />}
-      {screen.type === "flower-decoration" && <FlowerDecorationScreen onBack={() => setScreen({ type: "home" })} />}
-      {screen.type === "boutique" && <BoutiqueScreen onBack={() => { setScreen({ type: "home" }); setActiveTab("home"); }} />}
+      {screen.type === "flower-decoration" && <FlowerDecorationPage onBack={() => setScreen({ type: "home" })} />}
+      {screen.type === "boutique" && (
+        <BoutiquePage
+          onCategorySelect={(cat) => {
+            if (cat === "embroidery") setScreen({ type: "embroidery-category" });
+            else if (cat === "maggam") setScreen({ type: "maggam-category" });
+            else if (cat === "computer-embroidery") setScreen({ type: "computer-embroidery-category" });
+            else setScreen({ type: "outfit-stitching", category: cat });
+          }}
+          onBack={() => { setScreen({ type: "home" }); setActiveTab("home"); }}
+        />
+      )}
 
       {/* Salon Owner Screens */}
       {screen.type === "salon-owner-signup" && <SalonOwnerSignUpScreen ownerName={screen.ownerName} ownerEmail={screen.ownerEmail} ownerPhone={screen.ownerPhone} onSignUp={(salonData) => {
@@ -424,7 +451,7 @@ export default function App() {
 
       {/* Admin Screens */}
       {/* AdminDashboardScreen: just render */}
-      {screen.type === "admin-dashboard" && <AdminDashboardScreen />}
+      {screen.type === "admin-dashboard" && <AdminDashboardScreen onLogout={() => { setUserRole(null); setScreen({ type: "login" }); }} />}
 
       {/* Bottom Navigation */}
       {showBottomNavForScreen && <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />}
