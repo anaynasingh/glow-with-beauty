@@ -1,11 +1,17 @@
 import { Search, Tag, ChevronRight, Heart, User } from "lucide-react";
 import { useState } from "react";
 import { ServiceCard } from "../components/ServiceCard";
+import { Home, Camera, Flower, MoreHorizontal } from "lucide-react";
 // import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion";
 import { SalonCard } from "../components/SalonCard";
 import { StylistCard } from "../components/StylistCard";
 import { services, salons, appointments } from "../data/mockData";
+// Type fixes for salons and appointments
+type Salon = typeof salons[number];
+type Appointment = { salon: string } & Record<string, any>;
 import { useLanguage } from "../i18n/LanguageContext";
+import beautyAtHomePhoto from "../../images/beautyathome-photo.png";
+import eventsPhoto from "../../images/events-photo.png";
 
 interface HomeScreenProps {
   onServiceClick: (serviceName: string) => void;
@@ -25,122 +31,112 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
   const [searchQuery, setSearchQuery] = useState("");
 
 
-  // User-provided categories and images for women
-  const womenCategories = [
-    {
-      name: "Hair",
-      image: "https://images.unsplash.com/photo-1659036354224-48dd0a9a6b86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      subcategories: [
-        { name: "Hair Style", image: "https://images.unsplash.com/photo-1659036354224-48dd0a9a6b86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
-        { name: "Hair Color", image: "https://images.unsplash.com/photo-1605980625982-b128a7e7fde2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
-        { name: "Haircut & Style", image: "https://images.unsplash.com/photo-1654097801176-cb1795fd0c5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
-        { name: "Keratin Hair Spa", image: "https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" },
-        { name: "Balayage Hair Color", image: "https://images.pexels.com/photos/8468036/pexels-photo-8468036.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" },
-      ],
-    },
-    {
-      name: "Nails",
-      image: "https://images.unsplash.com/photo-1737214475335-8ed64d91f473?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      subcategories: [
-        { name: "Nail Art", image: "https://images.unsplash.com/photo-1737214475335-8ed64d91f473?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
-        { name: "Mani Pedi", image: "https://images.unsplash.com/photo-1737214475335-8ed64d91f473?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
-        { name: "Russian Manicure", image: "https://images.pexels.com/photos/3997383/pexels-photo-3997383.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" },
-      ],
-    },
-    {
-      name: "Face",
-      image: "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      subcategories: [
-        { name: "Facial", image: "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
-        { name: "Glass Skin Facial", image: "https://images.pexels.com/photos/5069432/pexels-photo-5069432.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" },
-        { name: "Skincare", image: "https://images.unsplash.com/photo-1608571899793-a1c0c27a7555?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" },
-      ],
-    },
-  ];
 
-  // User-provided categories and images for men
-  const menCategories = [
+  // Services for HomeScreen (updated to 8 specific services)
+  const homeServices = [
     {
-      name: "Beard",
-      image: "https://images.unsplash.com/photo-1621607512022-6aecc4fed814?auto=format&fit=crop&w=400&q=80",
-      subcategories: [
-        { name: "Beard Grooming", image: "https://images.unsplash.com/photo-1621607512022-6aecc4fed814?auto=format&fit=crop&w=400&q=80" },
-        { name: "Beard Trimming", image: "https://tse1.mm.bing.net/th/id/OIP.nNk4WkJf15U9xKJ1RS1KPwHaE7?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" },
-      ],
+      id: 1,
+      name: "Salon",
+      icon: Home,
+      color: "#6C4AB6",
+      image: "https://cdn.pixabay.com/photo/2019/03/08/20/17/beauty-salon-4043096_1280.jpg",
+      description: "All salon services under one roof"
     },
     {
-      name: "Hair",
-      image: "https://tse1.explicit.bing.net/th/id/OIP.hgRSJdaxN1c6UZ63pHR4VgHaD4?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3",
-      subcategories: [
-        { name: "Haircut", image: "https://tse1.explicit.bing.net/th/id/OIP.hgRSJdaxN1c6UZ63pHR4VgHaD4?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" },
-        { name: "Hair Coloring", image: "https://tse3.mm.bing.net/th/id/OIP.Gq1i64GgOt_mnheWYLIPsgHaE7?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" },
-      ],
+      id: 2,
+      name: "Beauty",
+      icon: Home,
+      color: "#FF6B9D",
+      image: "https://tse1.explicit.bing.net/th/id/OIP.z4n6Y4sLJv-tpboZHn4fkwHaE7?rs=1&pid=ImgDetMain&o=7&rm=3",
+      description: "Beauty treatments and care"
     },
     {
-      name: "Massage",
-      image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/dpr_2,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/growth/luminosity/1660029164522-d7a9e5.png",
-      subcategories: [
-        { name: "Head Massage", image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/dpr_2,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/growth/luminosity/1660029164522-d7a9e5.png" },
-        { name: "Face Massage", image: "https://thumbs.dreamstime.com/b/man-receiving-head-massage-medical-office-51614593.jpg" },
-      ],
+      id: 3,
+      name: "Spa",
+      icon: Home,
+      color: "#A3D8F4",
+      image: "https://media.istockphoto.com/photos/spa-and-wellness-setting-picture-id856952970?k=6&m=856952970&s=612x612&w=0&h=lRirZn5e9BAqaNRJ_8yb2PJsHS7fI5AtjAKwijcwnO4=",
+      description: "Relaxing spa experiences"
     },
     {
-      name: "Shaving",
-      image: "https://tse4.mm.bing.net/th/id/OIP.psUDhiH06F70GevV7F2e0QHaE8?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3",
-      subcategories: [
-        { name: "Shaving", image: "https://tse4.mm.bing.net/th/id/OIP.psUDhiH06F70GevV7F2e0QHaE8?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" },
-      ],
+      id: 4,
+      name: "Beauty at Home",
+      icon: Home,
+      color: "#FF6B9D",
+      image: beautyAtHomePhoto,
+      description: "Professional beauty services at your home"
     },
     {
-      name: "Eyebrow",
-      image: "https://browheaven.com/wp-content/uploads/2022/03/2-1024x577.png",
-      subcategories: [
-        { name: "Eyebrow Plucking", image: "https://browheaven.com/wp-content/uploads/2022/03/2-1024x577.png" },
-      ],
+      id: 5,
+      name: "Events",
+      icon: Home,
+      color: "#FFD700",
+      image: eventsPhoto,
+      description: "Event styling and services"
+    },
+    {
+      id: 6,
+      name: "Photography",
+      icon: Camera,
+      color: "#6C4AB6",
+      image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=compress&fit=crop&w=800&q=80",
+      description: "Professional photography services"
+    },
+    {
+      id: 7,
+      name: "Flower Decoration",
+      icon: Flower,
+      color: "#F4A6C1",
+      image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=500&h=500&fit=crop",
+      description: "Event and decor flowers"
+    },
+    {
+      id: 8,
+      name: "Boutique",
+      icon: Home,
+      color: "#E75480",
+      image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=compress&fit=crop&w=800&q=80",
+      description: "Fashion and boutique services"
     },
   ];
 
   // Define broad subcategories and their matching logic
-  const broadCategories = selectedGender === "men"
-    ? menCategories
-    : [
-        {
-          name: "Hair",
-          image: services.find(s => s.name.toLowerCase().includes("hair"))?.image,
-          keywords: ["Hair", "Haircut", "Hair Style", "Hair Coloring", "Keratin", "Blowout", "Balayage"],
-        },
-        {
-          name: "Nails",
-          image: services.find(s => s.name.toLowerCase().includes("nail"))?.image,
-          keywords: ["Nail", "Mani", "Pedi", "Manicure", "Pedicure"],
-        },
-        {
-          name: "Face",
-          image: services.find(s => s.name.toLowerCase().includes("facial"))?.image,
-          keywords: ["Facial", "Face", "Skincare", "Glass Skin"],
-        },
-        {
-          name: "Makeup",
-          image: services.find(s => s.name.toLowerCase().includes("makeup"))?.image,
-          keywords: ["Makeup", "Bridal", "Glam"],
-        },
-        {
-          name: "Massage",
-          image: services.find(s => s.name.toLowerCase().includes("massage"))?.image,
-          keywords: ["Massage", "Head Massage"],
-        },
-        {
-          name: "Waxing",
-          image: services.find(s => s.name.toLowerCase().includes("waxing"))?.image,
-          keywords: ["Waxing"],
-        },
-      ];
+  const broadCategories = [
+    {
+      name: "Hair",
+      image: services.find(s => s.name.toLowerCase().includes("hair"))?.image,
+      keywords: ["Hair", "Haircut", "Hair Style", "Hair Coloring", "Keratin", "Blowout", "Balayage"],
+    },
+    {
+      name: "Nails",
+      image: services.find(s => s.name.toLowerCase().includes("nail"))?.image,
+      keywords: ["Nail", "Mani", "Pedi", "Manicure", "Pedicure"],
+    },
+    {
+      name: "Face",
+      image: services.find(s => s.name.toLowerCase().includes("facial"))?.image,
+      keywords: ["Facial", "Face", "Skincare", "Glass Skin"],
+    },
+    {
+      name: "Makeup",
+      image: services.find(s => s.name.toLowerCase().includes("makeup"))?.image,
+      keywords: ["Makeup", "Bridal", "Glam"],
+    },
+    {
+      name: "Massage",
+      image: services.find(s => s.name.toLowerCase().includes("massage"))?.image,
+      keywords: ["Massage", "Head Massage"],
+    },
+    {
+      name: "Waxing",
+      image: services.find(s => s.name.toLowerCase().includes("waxing"))?.image,
+      keywords: ["Waxing"],
+    },
+  ];
 
-  // Filter and group services by broad category
-  // For men/women, use subcategories directly
-  const groupedServices = selectedGender === "men"
-    ? menCategories.map((cat) => ({ ...cat, services: cat.subcategories }))
-    : womenCategories.map((cat) => ({ ...cat, services: cat.subcategories }));
+
+  // Use homeServices for the top categories section
+  const groupedServices = homeServices;
 
   // State for selected broad category
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -180,39 +176,7 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
           </button>
         </div>
 
-        {/* Men/Women Toggle */}
-        <div className="flex gap-3 mb-6">
-          <button
-            onClick={() => setSelectedGender("men")}
-            className={`flex-1 py-3 rounded-xl text-sm transition-all ${
-              selectedGender === "men"
-                ? "bg-gradient-to-r from-[#6C4AB6] to-[#3D2C8D] text-white shadow-lg"
-                : "bg-white text-[#8A8A8A] border border-[rgba(108,74,182,0.1)]"
-            }`}
-            style={
-              selectedGender === "men"
-                ? { boxShadow: "0 4px 16px rgba(108, 74, 182, 0.3)" }
-                : {}
-            }
-          >
-            {t("men")}
-          </button>
-          <button
-            onClick={() => setSelectedGender("women")}
-            className={`flex-1 py-3 rounded-xl text-sm transition-all ${
-              selectedGender === "women"
-                ? "bg-gradient-to-r from-[#6C4AB6] to-[#3D2C8D] text-white shadow-lg"
-                : "bg-white text-[#8A8A8A] border border-[rgba(108,74,182,0.1)]"
-            }`}
-            style={
-              selectedGender === "women"
-                ? { boxShadow: "0 4px 16px rgba(108, 74, 182, 0.3)" }
-                : {}
-            }
-          >
-            {t("women")}
-          </button>
-        </div>
+        {/* Men/Women Toggle removed as requested */}
       </div>
 
 
@@ -272,8 +236,8 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
                 priceRange={salon.priceRange}
                 distance={salon.distance}
                 offer={salon.offer}
-                image={salon.image}
-                onClick={() => onSalonClick(salon.id)}
+                image={salon.image || ""}
+                onClick={() => (onSalonClick ? onSalonClick(salon.id) : undefined)}
                 horizontal
               />
             </div>
@@ -297,8 +261,8 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
               priceRange={salon.priceRange}
               distance={salon.distance}
               offer={salon.offer}
-              image={salon.image}
-              onClick={() => onSalonClick(salon.id)}
+              image={salon.image || ""}
+              onClick={() => (onSalonClick ? onSalonClick(salon.id) : undefined)}
               horizontal
             />
           ))}
@@ -316,7 +280,7 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
         </div>
         <p className="text-sm text-[#8A8A8A] mb-3 px-1">{t("basedOnPastBookings")}</p>
         <div className="flex gap-0 overflow-x-auto pb-2 -mx-6 px-6 no-scrollbar">
-          {salons.filter((s) => appointments.some((a) => a.salon === s.name)).map((salon) => (
+          {(salons as Salon[]).filter((s) => (appointments as Appointment[]).some((a) => a.salon === s.name)).map((salon) => (
             <SalonCard
               key={`personal-${salon.id}`}
               name={salon.name}
@@ -325,8 +289,8 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
               priceRange={salon.priceRange}
               distance={salon.distance}
               offer={salon.offer}
-              image={salon.image}
-              onClick={() => onSalonClick(salon.id)}
+              image={salon.image || ""}
+              onClick={() => (onSalonClick ? onSalonClick(salon.id) : undefined)}
               horizontal
             />
           ))}
@@ -353,8 +317,8 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
                 priceRange={salon.priceRange}
                 distance={salon.distance}
                 offer={salon.offer}
-                image={salon.image}
-                onClick={() => onSalonClick(salon.id)}
+                image={salon.image || ""}
+                onClick={() => (onSalonClick ? onSalonClick(salon.id) : undefined)}
                 horizontal
               />
             </div>
@@ -372,7 +336,7 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
           {services.filter((svc: any) => svc.trending).map((svc: any) => (
             <div key={`trend-${svc.id}`} className="relative">
               <div className="absolute top-2 right-2 bg-[#FFF2F0] text-[#D9534F] px-2 py-0.5 rounded-md text-xs">🔥 Trending</div>
-              <ServiceCard name={svc.name} image={svc.image} onClick={() => onServiceClick(svc.name)} />
+              <ServiceCard name={svc.name} image={svc.image} onClick={() => (onServiceClick ? onServiceClick(svc.name) : undefined)} />
             </div>
           ))}
         </div>
@@ -395,8 +359,8 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
                 priceRange={salon.priceRange}
                 distance={salon.distance}
                 offer={salon.offer}
-                image={salon.image}
-                onClick={() => onSalonClick(salon.id)}
+                image={salon.image || ""}
+                onClick={() => (onSalonClick ? onSalonClick(salon.id) : undefined)}
                 horizontal
               />
             </div>

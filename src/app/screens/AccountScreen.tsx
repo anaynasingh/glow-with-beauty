@@ -1,25 +1,27 @@
 import {
   User,
   Calendar,
+  Heart,
   MessageSquare,
   HelpCircle,
   LogOut,
   ChevronRight,
   Globe,
-  ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 
 interface AccountScreenProps {
   onMyBookingsClick?: () => void;
-  onBack?: () => void;
+  onFavoriteSalonsClick?: () => void;
 }
 
-export function AccountScreen({ onMyBookingsClick, onBack }: AccountScreenProps) {
+export function AccountScreen({ onMyBookingsClick, onFavoriteSalonsClick }: AccountScreenProps) {
   const { language, setLanguage, t } = useLanguage();
 
   const menuItems = [
     { icon: Calendar, label: t("myBookings"), color: "#6C4AB6", onClick: onMyBookingsClick },
+    { icon: Heart, label: t("favoriteSalons"), color: "#F4A6C1", onClick: onFavoriteSalonsClick },
     { icon: MessageSquare, label: t("myReviews"), color: "#E6C97A", onClick: () => {} },
     { icon: HelpCircle, label: t("helpSupport"), color: "#6C4AB6", onClick: () => {} },
   ];
@@ -28,14 +30,6 @@ export function AccountScreen({ onMyBookingsClick, onBack }: AccountScreenProps)
     <div className="pb-20">
       {/* Header */}
       <div className="bg-gradient-to-b from-[#6C4AB6] to-[#3D2C8D] px-6 pt-8 pb-8 rounded-b-3xl">
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="mb-4 w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-white" />
-          </button>
-        )}
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
             <User className="w-10 h-10 text-[#6C4AB6]" />

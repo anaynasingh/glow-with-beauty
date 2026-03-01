@@ -10,33 +10,61 @@ export function AdditionalServicesScreen({ onBack, onServiceClick }: AdditionalS
   const { t } = useLanguage();
 
   const services = [
-    { 
-      id: 1, 
-      name: "Beauty at Home", 
-      icon: Home, 
+    {
+      id: 1,
+      name: "Salon",
+      icon: Home,
+      color: "#6C4AB6",
+      description: "All salon services under one roof"
+    },
+    {
+      id: 2,
+      name: "Beauty",
+      icon: Home,
+      color: "#FF6B9D",
+      description: "Beauty treatments and care"
+    },
+    {
+      id: 3,
+      name: "Spa",
+      icon: Home,
+      color: "#A3D8F4",
+      description: "Relaxing spa experiences"
+    },
+    {
+      id: 4,
+      name: "Beauty at Home",
+      icon: Home,
       color: "#FF6B9D",
       description: "Professional beauty services at your home"
     },
-    { 
-      id: 2, 
-      name: "Photography", 
-      icon: Camera, 
+    {
+      id: 5,
+      name: "Events",
+      icon: Home,
+      color: "#FFD700",
+      description: "Event styling and services"
+    },
+    {
+      id: 6,
+      name: "Photography",
+      icon: Camera,
       color: "#6C4AB6",
       description: "Professional photography services"
     },
-    { 
-      id: 3, 
-      name: "Flower Decoration", 
-      icon: Flower, 
+    {
+      id: 7,
+      name: "Flower Decoration",
+      icon: Flower,
       color: "#F4A6C1",
       description: "Event and decor flowers"
     },
     {
-      id: 4,
-      name: "More Services",
-      icon: MoreHorizontal,
-      color: "#8A8A8A",
-      description: "Additional services coming soon"
+      id: 8,
+      name: "Boutique",
+      icon: ShoppingBag,
+      color: "#E75480",
+      description: "Fashion and boutique services"
     },
   ];
 

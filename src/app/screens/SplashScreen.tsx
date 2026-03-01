@@ -1,5 +1,5 @@
-import { Sparkles } from "lucide-react";
 import { useEffect } from "react";
+import glowWithBeauty from "../../images/logo-glow-with-beauty.png";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -16,12 +16,14 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#6C4AB6] to-[#3D2C8D]">
       <div className="flex flex-col items-center gap-6">
-        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center">
-          <Sparkles className="w-12 h-12 text-[#6C4AB6]" />
-        </div>
+        <img
+          src={glowWithBeauty}
+          alt="Glow with Beauty"
+          className="w-64 max-w-xs mb-4 drop-shadow-lg rounded-2xl bg-white/80 p-2"
+          style={{ objectFit: 'contain' }}
+        />
         <div className="text-center">
-          <h1 className="text-white text-3xl mb-2">BeautyHub</h1>
-          <p className="text-[#F3EEFF] text-sm">Your Beauty, Our Priority</p>
+          <h1 className="text-white text-3xl mb-2 font-bold">Glow with Beauty</h1>
         </div>
       </div>
     </div>
