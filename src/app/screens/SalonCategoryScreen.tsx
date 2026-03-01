@@ -59,7 +59,7 @@ const services = [
   },
   {
     name: "Detan",
-    image: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?auto=compress&fit=crop&w=800&q=80",
+    image: "https://slimmingsolutionsspa.com/wp-content/uploads/2025/07/Chemical-Peels-Risks-and-Side-Effects.jpg",
     sub: [
       {
         name: "Detan Treatment",
@@ -67,7 +67,7 @@ const services = [
         reviews: 2,
         price: 350,
         desc: "Brighten and refresh your skin with our detan treatment.",
-        image: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?auto=compress&fit=crop&w=800&q=80"
+        image: "https://slimmingsolutionsspa.com/wp-content/uploads/2025/07/Chemical-Peels-Risks-and-Side-Effects.jpg"
       }
     ]
   },
