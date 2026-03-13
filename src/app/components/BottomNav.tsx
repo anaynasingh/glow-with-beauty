@@ -1,4 +1,5 @@
-import { Home, Sparkles, Calendar, User } from "lucide-react";
+import { Home, Sparkles, Calendar } from "lucide-react";
+import ShoppingCartIcon from "../../images/shopping-cart.png";
 
 interface BottomNavProps {
   activeTab: string;
@@ -7,10 +8,10 @@ interface BottomNavProps {
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const tabs = [
-    { id: "home", icon: Home, label: "Home" },
-    { id: "services", icon: Sparkles, label: "Services" },
-    { id: "appointments", icon: Calendar, label: "Appointments" },
-    { id: "account", icon: User, label: "Account" },
+    { id: "home", icon: Home, label: "Home", isImage: false },
+    { id: "services", icon: Sparkles, label: "Services", isImage: false },
+    { id: "appointments", icon: Calendar, label: "Appointments", isImage: false },
+    { id: "boutique", icon: ShoppingCartIcon, label: "Marketplace", isImage: true },
   ];
 
   return (
@@ -25,11 +26,20 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               onClick={() => onTabChange(tab.id)}
               className="flex flex-col items-center justify-center gap-1 flex-1"
             >
-              <Icon
-                className={`w-5 h-5 ${
-                  isActive ? "text-[#6C4AB6]" : "text-[#8A8A8A]"
-                }`}
-              />
+              {tab.isImage ? (
+                <img
+                  src={Icon}
+                  alt={tab.label}
+                  className="w-6 h-6"
+                  style={{ filter: isActive ? 'grayscale(0%)' : 'grayscale(60%)', opacity: isActive ? 1 : 0.7 }}
+                />
+              ) : (
+                <Icon
+                  className={`w-5 h-5 ${
+                    isActive ? "text-[#6C4AB6]" : "text-[#8A8A8A]"
+                  }`}
+                />
+              )}
               <span
                 className={`text-[10px] ${
                   isActive ? "text-[#6C4AB6]" : "text-[#8A8A8A]"

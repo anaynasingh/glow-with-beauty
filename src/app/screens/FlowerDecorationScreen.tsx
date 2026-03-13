@@ -152,7 +152,7 @@ export function FlowerDecorationScreen({ onBack, onVendorClick }: FlowerDecorati
               </div>
 
               {/* Service Types */}
-              <div className="flex flex-wrap gap-2 mb-auto">
+              <div className="flex flex-wrap gap-2 mb-3">
                 {vendor.serviceTypes.slice(0, 3).map((type, idx) => (
                   <span
                     key={idx}
@@ -164,7 +164,7 @@ export function FlowerDecorationScreen({ onBack, onVendorClick }: FlowerDecorati
               </div>
 
               {/* Contact Button */}
-              <button className="w-full bg-gradient-to-r from-[#F4A6C1] to-[#E64980] text-white py-2 rounded-lg font-semibold flex items-center justify-center gap-2 active:opacity-90 transition-opacity mt-auto">
+              <button className="bg-gradient-to-r from-[#E64980] to-[#E64980] text-white px-6 py-1.5 rounded-lg font-semibold flex items-center justify-center gap-2 active:opacity-90 transition-opacity mt-auto text-sm">
                 <Phone className="w-4 h-4" />
                 Order Now
               </button>

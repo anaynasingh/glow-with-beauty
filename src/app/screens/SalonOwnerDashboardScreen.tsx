@@ -10,7 +10,10 @@ import {
   DollarSign,
   BookOpen,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
+import { useState } from "react";
+import { Location } from "../data/mockData";
 
 interface SalonOwnerDashboardScreenProps {
   salonName: string;
@@ -18,6 +21,7 @@ interface SalonOwnerDashboardScreenProps {
   monthlyEarnings: number;
   weeklyEarnings: number;
   pendingBookings: number;
+  locations?: Location[];
   onNavigate: (page: string) => void;
   onLogout: () => void;
 }
@@ -28,9 +32,58 @@ export function SalonOwnerDashboardScreen({
   monthlyEarnings,
   weeklyEarnings,
   pendingBookings,
+  locations = [],
   onNavigate,
   onLogout,
 }: SalonOwnerDashboardScreenProps) {
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Calculate data based on selected location
+  const getDisplayData = () => {
+    if (!selectedLocationId || selectedLocationId === 0) {
+      // Show combined data for all locations
+      if (locations.length > 0) {
+        const combinedEarnings = locations.reduce((sum, loc) => sum + (loc.earnings?.total || 0), 0);
+        const combinedMonthly = locations.reduce((sum, loc) => sum + (loc.earnings?.thisMonth || 0), 0);
+        const combinedWeekly = locations.reduce((sum, loc) => sum + (loc.earnings?.thisWeek || 0), 0);
+        const combinedPending = locations.reduce((sum, loc) => sum + (loc.pending_bookings || 0), 0);
+        return {
+          total: combinedEarnings,
+          monthly: combinedMonthly,
+          weekly: combinedWeekly,
+          pending: combinedPending,
+        };
+      }
+      return {
+        total: totalEarnings,
+        monthly: monthlyEarnings,
+        weekly: weeklyEarnings,
+        pending: pendingBookings,
+      };
+    }
+
+    // Show data for selected location
+    const location = locations.find((loc) => loc.id === selectedLocationId);
+    if (location) {
+      return {
+        total: location.earnings?.total || 0,
+        monthly: location.earnings?.thisMonth || 0,
+        weekly: location.earnings?.thisWeek || 0,
+        pending: location.pending_bookings || 0,
+      };
+    }
+
+    return {
+      total: totalEarnings,
+      monthly: monthlyEarnings,
+      weekly: weeklyEarnings,
+      pending: pendingBookings,
+    };
+  };
+
+  const displayData = getDisplayData();
+  const selectedLocation = selectedLocationId && selectedLocationId !== 0 ? locations.find((loc) => loc.id === selectedLocationId) : null;
   const menuItems = [
     {
       id: "calendar",
@@ -103,7 +156,7 @@ export function SalonOwnerDashboardScreen({
       {/* Header */}
       <div className="bg-gradient-to-r from-[#6C4AB6] to-[#8B5FBF] text-white px-6 py-8">
         <div className="flex items-center justify-between mb-4">
-          <div>
+          <div className="flex-1">
             <p className="text-sm opacity-90">Welcome back</p>
             <h1 className="text-2xl font-bold">{salonName}</h1>
           </div>
@@ -115,6 +168,55 @@ export function SalonOwnerDashboardScreen({
             <LogOut className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Location Dropdown */}
+        {locations.length > 0 && (
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="w-full bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg flex items-center justify-between transition-colors"
+            >
+              <span className="text-sm font-medium">
+                {selectedLocationId === null || selectedLocationId === 0
+                  ? "All Locations"
+                  : selectedLocation?.name || "Select Location"}
+              </span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white text-[#1F1F1F] rounded-lg shadow-lg z-50 overflow-hidden">
+                <button
+                  onClick={() => {
+                    setSelectedLocationId(0);
+                    setDropdownOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 hover:bg-[#F8F7FF] transition-colors text-sm font-medium ${
+                    (selectedLocationId === null || selectedLocationId === 0) ? "bg-[#E0D9F0]" : ""
+                  }`}
+                >
+                  All Locations
+                </button>
+                {locations.map((location) => (
+                  <button
+                    key={location.id}
+                    onClick={() => {
+                      setSelectedLocationId(location.id);
+                      setDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-3 hover:bg-[#F8F7FF] transition-colors text-sm border-t border-[#E0D9F0] ${
+                      selectedLocationId === location.id ? "bg-[#E0D9F0]" : ""
+                    }`}
+                  >
+                    <p className="font-medium">{location.name}</p>
+                    <p className="text-xs text-[#8A8A8A]">{location.address}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Scrollable Content */}
@@ -131,11 +233,11 @@ export function SalonOwnerDashboardScreen({
                 <div className="flex items-center justify-between mb-2">
                   <Calendar className="w-5 h-5 text-[#6C4AB6]" />
                   <span className="text-xs font-semibold text-[#FF6B6B] bg-[#FFE0E0] px-2 py-1 rounded-full">
-                    {pendingBookings}
+                    {displayData.pending}
                   </span>
                 </div>
                 <p className="text-2xl font-bold text-[#1F1F1F]">
-                  {pendingBookings}
+                  {displayData.pending}
                 </p>
                 <p className="text-xs text-[#8A8A8A]">Pending Bookings</p>
               </div>
@@ -146,7 +248,7 @@ export function SalonOwnerDashboardScreen({
                   <DollarSign className="w-5 h-5 text-[#10B981]" />
                 </div>
                 <p className="text-2xl font-bold text-[#1F1F1F]">
-                  ₹{weeklyEarnings.toLocaleString()}
+                  ₹{displayData.weekly.toLocaleString()}
                 </p>
                 <p className="text-xs text-[#8A8A8A]">This Week</p>
               </div>
@@ -159,12 +261,12 @@ export function SalonOwnerDashboardScreen({
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-sm opacity-90">Monthly Earnings</p>
-                  <p className="text-3xl font-bold">₹{monthlyEarnings.toLocaleString()}</p>
+                  <p className="text-3xl font-bold">₹{displayData.monthly.toLocaleString()}</p>
                 </div>
                 <TrendingUp className="w-10 h-10 opacity-50" />
               </div>
               <div className="bg-white/20 rounded-lg p-3 mt-4">
-                <p className="text-xs opacity-90">Total Earnings: ₹{totalEarnings.toLocaleString()}</p>
+                <p className="text-xs opacity-90">Total Earnings: ₹{displayData.total.toLocaleString()}</p>
               </div>
             </div>
           </div>

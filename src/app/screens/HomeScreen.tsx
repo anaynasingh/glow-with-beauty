@@ -92,11 +92,11 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
     },
     {
       id: 8,
-      name: "Boutique",
-      icon: Home,
-      color: "#E75480",
-      image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=compress&fit=crop&w=800&q=80",
-      description: "Fashion and boutique services"
+      name: "More",
+      icon: MoreHorizontal,
+      color: "#9B8FB8",
+      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=compress&fit=crop&w=800&q=80",
+      description: "Explore more services"
     },
   ];
 

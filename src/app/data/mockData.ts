@@ -308,6 +308,30 @@ export const salons = [
 
 export const appointments = [];
 
+// Location Structure for Multi-Location Salons
+export interface Location {
+  id: number;
+  name: string;
+  address: string;
+  phone: string;
+  timings?: {
+    monday: { open: string; close: string };
+    tuesday: { open: string; close: string };
+    wednesday: { open: string; close: string };
+    thursday: { open: string; close: string };
+    friday: { open: string; close: string };
+    saturday: { open: string; close: string };
+    sunday: { open: string; close: string };
+  };
+  staff?: Staff[];
+  earnings?: {
+    total: number;
+    thisMonth: number;
+    thisWeek: number;
+  };
+  pending_bookings: number;
+}
+
 // Salon Owner Structures
 export interface SalonOwner {
   id: number;
@@ -322,6 +346,7 @@ export interface SalonOwner {
   approvedAt?: string;
   image?: string;
   description?: string;
+  locations?: Location[];
   timings?: {
     monday: { open: string; close: string };
     tuesday: { open: string; close: string };
@@ -385,6 +410,81 @@ export const salonOwners: SalonOwner[] = [
     approvedAt: "2025-01-20",
     image: "salon-interior",
     description: "Premier beauty destination",
+    locations: [
+      {
+        id: 101,
+        name: "Glamour Studio - Downtown",
+        address: "123 Fashion Street, Downtown",
+        phone: "9876543210",
+        earnings: {
+          total: 50000,
+          thisMonth: 6500,
+          thisWeek: 1500,
+        },
+        pending_bookings: 3,
+        timings: {
+          monday: { open: "10:00 AM", close: "9:00 PM" },
+          tuesday: { open: "10:00 AM", close: "9:00 PM" },
+          wednesday: { open: "10:00 AM", close: "9:00 PM" },
+          thursday: { open: "10:00 AM", close: "9:00 PM" },
+          friday: { open: "10:00 AM", close: "10:00 PM" },
+          saturday: { open: "10:00 AM", close: "10:00 PM" },
+          sunday: { open: "11:00 AM", close: "8:00 PM" },
+        },
+        staff: [
+          { id: 1, name: "Priya Sharma", specialization: "Hair Styling", experience: "8 years", phone: "9111111111", email: "priya@glamour.com", joinDate: "2020-05-10" },
+          { id: 2, name: "Raj Malhotra", specialization: "Hair Color", experience: "5 years", phone: "9111111112", email: "raj@glamour.com", joinDate: "2022-03-15" },
+        ],
+      },
+      {
+        id: 102,
+        name: "Glamour Studio - West Side",
+        address: "456 Park Avenue, West Side",
+        phone: "9876543220",
+        earnings: {
+          total: 45000,
+          thisMonth: 5500,
+          thisWeek: 1200,
+        },
+        pending_bookings: 2,
+        timings: {
+          monday: { open: "10:00 AM", close: "9:00 PM" },
+          tuesday: { open: "10:00 AM", close: "9:00 PM" },
+          wednesday: { open: "10:00 AM", close: "9:00 PM" },
+          thursday: { open: "10:00 AM", close: "9:00 PM" },
+          friday: { open: "10:00 AM", close: "10:00 PM" },
+          saturday: { open: "10:00 AM", close: "10:00 PM" },
+          sunday: { open: "11:00 AM", close: "8:00 PM" },
+        },
+        staff: [
+          { id: 3, name: "Neha Singh", specialization: "Makeup Artist", experience: "6 years", phone: "9111111113", email: "neha@glamour.com", joinDate: "2021-07-20" },
+        ],
+      },
+      {
+        id: 103,
+        name: "Glamour Studio - North Gate",
+        address: "789 Valley Road, North Gate",
+        phone: "9876543230",
+        earnings: {
+          total: 30000,
+          thisMonth: 3000,
+          thisWeek: 800,
+        },
+        pending_bookings: 1,
+        timings: {
+          monday: { open: "11:00 AM", close: "8:00 PM" },
+          tuesday: { open: "11:00 AM", close: "8:00 PM" },
+          wednesday: { open: "11:00 AM", close: "8:00 PM" },
+          thursday: { open: "11:00 AM", close: "8:00 PM" },
+          friday: { open: "10:00 AM", close: "9:00 PM" },
+          saturday: { open: "10:00 AM", close: "10:00 PM" },
+          sunday: { open: "12:00 PM", close: "7:00 PM" },
+        },
+        staff: [
+          { id: 4, name: "Anjali Patel", specialization: "Nail Art", experience: "4 years", phone: "9111111114", email: "anjali@glamour.com", joinDate: "2023-01-10" },
+        ],
+      },
+    ],
     timings: {
       monday: { open: "10:00 AM", close: "9:00 PM" },
       tuesday: { open: "10:00 AM", close: "9:00 PM" },
