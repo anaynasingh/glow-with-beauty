@@ -116,7 +116,7 @@ export function SalonOffersScreen({
             </button>
             <div>
               <h1 className="text-xl font-bold text-[#1F1F1F]">
-                Offers & Deals
+                Offers Management
               </h1>
               <p className="text-xs text-[#8A8A8A]">{salonName}</p>
             </div>

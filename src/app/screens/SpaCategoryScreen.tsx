@@ -1,247 +1,278 @@
-import React, { useState } from "react";
+﻿import { MapPin } from "lucide-react";
+import { useState } from "react";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
-const spaCategories = [
-  { 
-    key: "swedish-massage", 
-    label: "Swedish Massage",
-    image: "https://www.health.com/thmb/3x2SXCdrwYCun8rme7nUiG3PzMU=/5760x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1175433234-034014dc5b9c45edaeaf04c7b80ceafc.jpg"
-  },
-  { 
-    key: "deep-tissue", 
-    label: "Deep Tissue",
-    image: "https://fearrington.com/cdn/shop/articles/spa-edit111125_1600x.jpg?v=1767813465"
-  },
-  { 
-    key: "pain-relief", 
-    label: "Pain Relief",
-    image: "https://sa1s3optim.patientpop.com/assets/images/provider/photos/2723311.jpg"
-  },
-  { 
-    key: "skin-care", 
-    label: "Skin Care Scrubs",
-    image: "https://nabilak.com/wp-content/uploads/2018/10/How-to-Use-Body-Scrubs-Correctly-2.jpg"
-  },
-  { 
-    key: "post-natal", 
-    label: "Post Natal",
-    image: "https://www.burkewilliams.com/hubfs/Benefits-of-a-Postnatal-Postpartum-Massage-Burke-Williams.png"
-  },
-  { 
-    key: "aromatherapy", 
-    label: "Aromatherapy",
-    image: "https://luminisbeauty.co.uk/cdn/shop/articles/Luminis_blog_banners_images_1_ee9b396e-ac60-4225-9e91-ac797d29d4d6.jpg?v=1738152658"
-  },
-  { 
-    key: "reflexology", 
-    label: "Reflexology",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQctF3wwN8v0lO7iWmsUkKyo_j9zi1BgRnqsA&s"
-  },
-  { 
-    key: "add-ons", 
-    label: "Add-ons",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_7GvFImnndba8i6PC9JpGAwU8M7jk1IN5lw&s"
-  },
-];
+type SpaCategory = {
+  key: string;
+  label: string;
+  image: string;
+};
 
-interface SpaVendor {
+type SpaShop = {
   id: number;
   name: string;
   rating: number;
   reviews: number;
-  location: string;
   distance: string;
-  phone: string;
-  image: string;
-  serviceTypes: string[];
   priceRange: string;
-}
-
-interface SpaCategoryScreenProps {
-  onBack: () => void;
-  onVendorClick?: (vendorId: number) => void;
-}
-
-interface VendorCardProps {
-  name: string;
-  rating: number;
-  reviews: number;
-  location: string;
-  distance: string;
+  hasOffer: boolean;
+  categories: string[];
   image: string;
-  priceRange: string;
-  onClick?: () => void;
-}
+  specialties: string;
+};
 
-const VendorCard: React.FC<VendorCardProps> = ({
-  name,
-  rating,
-  reviews,
-  location,
-  distance,
-  image,
-  priceRange,
-  onClick,
-}) => (
-  <button
-    onClick={onClick}
-    className="w-full bg-white rounded-2xl overflow-hidden p-4 flex gap-4 active:opacity-80 transition-opacity border border-[rgba(108,74,182,0.1)]"
-    style={{ boxShadow: "0 2px 12px rgba(108, 74, 182, 0.08)" }}
-  >
-    {/* Image */}
-    <div className="w-28 h-28 rounded-lg flex-shrink-0 overflow-hidden">
-      <img src={image} alt={name} className="w-full h-full object-cover" />
-    </div>
+const spaCategories: SpaCategory[] = [
+  {
+    key: "spa",
+    label: "Spa",
+    image:
+      "https://media.istockphoto.com/photos/spa-and-wellness-setting-picture-id856952970?k=6&m=856952970&s=612x612&w=0&h=lRirZn5e9BAqaNRJ_8yb2PJsHS7fI5AtjAKwijcwnO4=",
+  },
+  {
+    key: "pain-relief",
+    label: "Pain Relief",
+    image:
+      "https://sa1s3optim.patientpop.com/assets/images/provider/photos/2723311.jpg",
+  },
+  {
+    key: "scrubs",
+    label: "Skin Care Scrubs",
+    image:
+      "https://nabilak.com/wp-content/uploads/2018/10/How-to-Use-Body-Scrubs-Correctly-2.jpg",
+  },
+  {
+    key: "post-natal",
+    label: "Post Natal",
+    image:
+      "https://www.burkewilliams.com/hubfs/Benefits-of-a-Postnatal-Postpartum-Massage-Burke-Williams.png",
+  },
+  {
+    key: "add-ons",
+    label: "Add-ons",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_7GvFImnndba8i6PC9JpGAwU8M7jk1IN5lw&s",
+  },
+];
 
-    {/* Content */}
-    <div className="flex-1 text-left">
-      <h3 className="font-semibold text-[#1F1F1F] mb-1">{name}</h3>
-      <div className="flex items-center gap-2 mb-1 text-sm">
-        <span className="text-[#FFB800] font-semibold">⭐ {rating}</span>
-        <span className="text-[#8A8A8A] text-xs">({reviews} reviews)</span>
-      </div>
-      <div className="text-xs text-[#8A8A8A] mb-2">
-        📍 {location} • {distance}
-      </div>
-      <div className="font-semibold text-[#6C4AB6] text-sm">{priceRange}</div>
-    </div>
-  </button>
-);
+const filterCategories = [
+  "Popular",
+  "Best Rated",
+  "Price: Low to High",
+  "Trending",
+  "Affordable",
+  "Luxury",
+  "Quick Service",
+  "Reviews",
+  "Offers",
+];
 
-export default function SpaCategoryScreen({ onBack, onVendorClick }: SpaCategoryScreenProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+const spaShops: SpaShop[] = [
+  {
+    id: 1,
+    name: "Tranquil Touch Spa",
+    rating: 4.8,
+    reviews: 540,
+    distance: "3.2 km",
+    priceRange: "₹₹₹",
+    hasOffer: true,
+    categories: ["spa", "add-ons"],
+    image:
+      "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=80",
+    specialties: "Aromatherapy, Swedish Massage",
+  },
+  {
+    id: 2,
+    name: "Serenity Springs Wellness",
+    rating: 4.7,
+    reviews: 410,
+    distance: "6.8 km",
+    priceRange: "₹₹",
+    hasOffer: false,
+    categories: ["pain-relief", "spa"],
+    image:
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=900&q=80",
+    specialties: "Deep Tissue, Hot Stone Therapy",
+  },
+  {
+    id: 3,
+    name: "Lotus Calm Retreat",
+    rating: 4.9,
+    reviews: 620,
+    distance: "11.5 km",
+    priceRange: "₹₹₹",
+    hasOffer: true,
+    categories: ["post-natal", "scrubs"],
+    image:
+      "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=900&q=80",
+    specialties: "Post Natal Care, Detox Rituals",
+  },
+  {
+    id: 4,
+    name: "Urban Zen Therapy Spa",
+    rating: 4.6,
+    reviews: 298,
+    distance: "18.1 km",
+    priceRange: "₹₹",
+    hasOffer: false,
+    categories: ["pain-relief", "add-ons"],
+    image:
+      "https://images.unsplash.com/photo-1552693673-1bf958298935?auto=format&fit=crop&w=900&q=80",
+    specialties: "Pain Relief, Reflexology",
+  },
+];
 
-  const vendors: SpaVendor[] = [
-    {
-      id: 1,
-      name: "Serenity Spa Wellness",
-      rating: 4.9,
-      reviews: 245,
-      location: "Sector 35, Noida",
-      distance: "3.2 km",
-      phone: "+91 99234 56789",
-      image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/f7/03/67/cabina-duo-de-spa-del.jpg?w=700&h=400&s=1",
-      serviceTypes: ["Swedish Massage", "Deep Tissue", "Aromatherapy"],
-      priceRange: "₹500 - ₹2,500",
-    },
-    {
-      id: 2,
-      name: "Tranquil Moments Spa",
-      rating: 4.8,
-      reviews: 198,
-      location: "DLF Cyber City, Gurgaon",
-      distance: "6.5 km",
-      phone: "+91 88234 56789",
-      image: "https://www.palaceresorts.com/hydrothermal_experience_palace_resorts_99165e43aa.webp",
-      serviceTypes: ["Pain Relief", "Reflexology", "Deep Tissue"],
-      priceRange: "₹600 - ₹3,000",
-    },
-    {
-      id: 3,
-      name: "Bliss Spa & Wellness Center",
-      rating: 4.7,
-      reviews: 167,
-      location: "Connaught Place, Delhi",
-      distance: "8.4 km",
-      phone: "+91 77234 56789",
-      image: "https://mohegansun.com/content/dam/mohegansun/Images/Spa/Carousel-Mandara_Spa_Couples-1440x620.jpg",
-      serviceTypes: ["Skin Care Scrubs", "Aromatherapy", "Swedish Massage"],
-      priceRange: "₹700 - ₹3,500",
-    },
-    {
-      id: 4,
-      name: "Zen Harmony Spa",
-      rating: 4.6,
-      reviews: 152,
-      location: "Nehru Place, Delhi",
-      distance: "7.1 km",
-      phone: "+91 66234 56789",
-      image: "https://assets.simpleviewinc.com/simpleview/image/upload/c_limit,h_1200,q_75,w_1200/v1/clients/anaheimca/SPA_Pasea_Hotel__fb1f8721-a104-4e4f-8174-2b79eb1f1d14.jpg",
-      serviceTypes: ["Post Natal", "Pain Relief", "Reflexology"],
-      priceRange: "₹400 - ₹2,000",
-    },
-  ];
+const priceScore = (priceRange: string) => priceRange.replace(/[^₹]/g, "").length;
 
-  // Helper function to check if a spa offers a service matching the category
-  const spaOffersService = (spa: SpaVendor, categoryName: string): boolean => {
-    if (!spa.serviceTypes) return false;
-    return spa.serviceTypes.some((service) =>
-      service.toLowerCase().includes(categoryName.toLowerCase()) ||
-      categoryName.toLowerCase().includes(service.toLowerCase().split("-")[0].trim())
+export default function SpaCategoryScreen({ onBack }: { onBack?: () => void }) {
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [showOffers, setShowOffers] = useState(false);
+  const [distanceFilter, setDistanceFilter] = useState(15);
+
+  const selectedCategoryKey = spaCategories[selectedCategoryIndex]?.key;
+
+  const toggleFilter = (filter: string) => {
+    if (filter === "Offers") {
+      setShowOffers(!showOffers);
+      return;
+    }
+
+    setSelectedFilters((prev) =>
+      prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter]
     );
   };
 
-  // Filter spas based on selected category
-  const displayedSpas = selectedCategory
-    ? vendors.filter((spa) => spaOffersService(spa, selectedCategory))
-    : vendors;
+  const filteredShops = spaShops.filter((shop) => {
+    if (!shop.categories.includes(selectedCategoryKey)) return false;
+
+    const km = parseFloat(shop.distance);
+    if (km > distanceFilter) return false;
+
+    if (showOffers && !shop.hasOffer) return false;
+    if (selectedFilters.includes("Popular") && shop.rating < 4.5) return false;
+    if (selectedFilters.includes("Best Rated") && shop.rating < 4.7) return false;
+    if (selectedFilters.includes("Trending") && (shop.rating < 4.6 || shop.reviews < 300)) {
+      return false;
+    }
+    if (selectedFilters.includes("Affordable") && shop.priceRange.includes("₹₹₹")) {
+      return false;
+    }
+    if (selectedFilters.includes("Luxury") && !shop.priceRange.includes("₹₹₹")) {
+      return false;
+    }
+    if (selectedFilters.includes("Quick Service") && km > 6) return false;
+    if (selectedFilters.includes("Reviews") && shop.reviews < 250) return false;
+
+    return true;
+  });
+
+  const displayedShops = selectedFilters.includes("Price: Low to High")
+    ? [...filteredShops].sort((a, b) => priceScore(a.priceRange) - priceScore(b.priceRange))
+    : filteredShops;
 
   return (
-    <div className="pb-20 bg-gradient-to-b from-[#F8F7FF] to-white min-h-screen">
-      {/* Header */}
-      <div className="px-6 pt-8 pb-6">
-        {onBack && (
-          <button onClick={onBack} className="text-[#6C4AB6] font-medium text-sm mb-4">
-            ← Back
-          </button>
-        )}
-        <h2 className="text-2xl font-bold text-[#1F1F1F]">Spa & Wellness</h2>
+    <div className="pb-20 bg-white min-h-screen">
+      <div className="px-4 pt-6">
+        <div className="flex items-center mb-4">
+          {onBack && (
+            <button onClick={onBack} className="mr-2 text-[#6C4AB6]">
+              &#8592;
+            </button>
+          )}
+          <h2 className="text-2xl font-bold text-[#1F1F1F]">Spa Services</h2>
+        </div>
       </div>
 
-      {/* Top Categories */}
-      <div className="mb-8">
-        <h3 className="text-[#1F1F1F] px-6 mb-4 font-semibold">Service Types</h3>
-        <div className="flex gap-4 overflow-x-auto px-6 pb-2 no-scrollbar">
-          {spaCategories.map((cat) => (
+      <div className="px-4 mb-2 sticky top-0 z-10 bg-white">
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+          {spaCategories.map((cat, idx) => (
             <button
               key={cat.key}
-              onClick={() => setSelectedCategory(selectedCategory === cat.label ? null : cat.label)}
-              className={`flex flex-col items-center gap-2 hover:opacity-80 transition-all flex-shrink-0`}
+              className={`flex flex-col items-center min-w-[72px] focus:outline-none ${
+                selectedCategoryIndex === idx ? "border-b-2 border-[#6C4AB6]" : ""
+              }`}
+              onClick={() => setSelectedCategoryIndex(idx)}
             >
               <div
-                className={`w-24 h-24 rounded-2xl shadow-md overflow-hidden ${
-                  selectedCategory === cat.label ? "ring-2 ring-[#6C4AB6]" : ""
+                className={`w-14 h-14 rounded-lg overflow-hidden mb-1 border ${
+                  selectedCategoryIndex === idx ? "border-[#6C4AB6]" : "border-gray-200"
                 }`}
               >
-                <img 
-                  src={cat.image} 
-                  alt={cat.label} 
-                  className="w-full h-full object-cover"
-                />
+                <ImageWithFallback src={cat.image} alt={cat.label} className="w-full h-full object-cover" />
               </div>
-              <p className="text-xs text-[#1F1F1F] text-center max-w-[100px] font-medium">
+              <span
+                className={`text-xs text-center mt-1 whitespace-nowrap ${
+                  selectedCategoryIndex === idx ? "text-[#6C4AB6] font-semibold" : "text-gray-700"
+                }`}
+              >
                 {cat.label}
-              </p>
+              </span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Spa Vendors Near You */}
-      <div className="px-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[#1F1F1F] font-semibold">
-            {selectedCategory ? `Spas with ${selectedCategory}` : "Spas Near You"}
-          </h3>
+      <div className="px-4 mt-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2 pb-2 min-w-max">
+          {filterCategories.map((filter) => (
+            <button
+              key={filter}
+              onClick={() => toggleFilter(filter)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                selectedFilters.includes(filter) || (filter === "Offers" && showOffers)
+                  ? "bg-[#6C4AB6] text-white"
+                  : "bg-[#FFF0F5] text-[#FF6B9D] border border-[#FFD9E8]"
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
         </div>
-        {displayedSpas.length > 0 ? (
-          <div className="space-y-4">
-            {displayedSpas.map((vendor) => (
-              <VendorCard
-                key={vendor.id}
-                name={vendor.name}
-                rating={vendor.rating}
-                reviews={vendor.reviews}
-                location={vendor.location}
-                distance={vendor.distance}
-                image={vendor.image}
-                priceRange={vendor.priceRange}
-                onClick={() => onVendorClick?.(vendor.id)}
-              />
-            ))}
-          </div>
+      </div>
+
+      <div className="px-4 mb-6 bg-[#F8F7FF] rounded-xl p-4 mt-2">
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-sm font-semibold text-[#1F1F1F]">Distance: {distanceFilter} km</label>
+          <MapPin className="w-4 h-4 text-[#6C4AB6]" />
+        </div>
+        <input
+          type="range"
+          min="1"
+          max="50"
+          value={distanceFilter}
+          onChange={(e) => setDistanceFilter(Number(e.target.value))}
+          className="w-full h-1 bg-[#E0D9F0] rounded-lg appearance-none cursor-pointer accent-[#6C4AB6]"
+        />
+        <div className="flex justify-between text-xs text-[#8A8A8A] mt-2">
+          <span>1 km</span>
+          <span>50 km</span>
+        </div>
+      </div>
+
+      <div className="px-6 pb-6">
+        <h3 className="text-lg font-bold text-[#1F1F1F] mb-3">Spa Shops Near You ({displayedShops.length})</h3>
+
+        {displayedShops.length === 0 ? (
+          <p className="text-sm text-[#8A8A8A]">No spa shops match current filters.</p>
         ) : (
-          <div className="text-center py-8">
-            <p className="text-[#8A8A8A]">No spas found for this service</p>
+          <div className="space-y-3">
+            {displayedShops.map((shop) => (
+              <div
+                key={shop.id}
+                className="bg-white border-2 border-[#E0D9F0] rounded-xl p-3"
+                style={{ boxShadow: "0 2px 12px rgba(108, 74, 182, 0.08)" }}
+              >
+                <div className="flex gap-3">
+                  <ImageWithFallback src={shop.image} alt={shop.name} className="w-20 h-20 rounded-lg object-cover" />
+                  <div className="flex-1">
+                    <h4 className="text-sm font-semibold text-[#1F1F1F]">{shop.name}</h4>
+                    <p className="text-xs text-[#8A8A8A] mt-1">⭐ {shop.rating} ({shop.reviews} reviews)</p>
+                    <p className="text-xs text-[#8A8A8A]">{shop.distance} • {shop.priceRange}</p>
+                    <p className="text-xs text-[#6C4AB6] mt-1">{shop.specialties}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

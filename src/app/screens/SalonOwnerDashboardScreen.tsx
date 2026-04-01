@@ -10,10 +10,21 @@ import {
   DollarSign,
   BookOpen,
   ChevronRight,
-  ChevronDown,
+  Sparkles,
+  MapPin,
 } from "lucide-react";
 import { useState } from "react";
-import { Location } from "../data/mockData";
+
+interface Location {
+  id: number;
+  name: string;
+  address: string;
+  earnings: {
+    total: number;
+    thisMonth: number;
+    thisWeek: number;
+  };
+}
 
 interface SalonOwnerDashboardScreenProps {
   salonName: string;
@@ -37,54 +48,24 @@ export function SalonOwnerDashboardScreen({
   onLogout,
 }: SalonOwnerDashboardScreenProps) {
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Calculate data based on selected location
-  const getDisplayData = () => {
-    if (!selectedLocationId || selectedLocationId === 0) {
-      // Show combined data for all locations
-      if (locations.length > 0) {
-        const combinedEarnings = locations.reduce((sum, loc) => sum + (loc.earnings?.total || 0), 0);
-        const combinedMonthly = locations.reduce((sum, loc) => sum + (loc.earnings?.thisMonth || 0), 0);
-        const combinedWeekly = locations.reduce((sum, loc) => sum + (loc.earnings?.thisWeek || 0), 0);
-        const combinedPending = locations.reduce((sum, loc) => sum + (loc.pending_bookings || 0), 0);
-        return {
-          total: combinedEarnings,
-          monthly: combinedMonthly,
-          weekly: combinedWeekly,
-          pending: combinedPending,
-        };
-      }
-      return {
-        total: totalEarnings,
-        monthly: monthlyEarnings,
-        weekly: weeklyEarnings,
-        pending: pendingBookings,
-      };
-    }
-
-    // Show data for selected location
-    const location = locations.find((loc) => loc.id === selectedLocationId);
-    if (location) {
-      return {
-        total: location.earnings?.total || 0,
-        monthly: location.earnings?.thisMonth || 0,
-        weekly: location.earnings?.thisWeek || 0,
-        pending: location.pending_bookings || 0,
-      };
-    }
-
-    return {
-      total: totalEarnings,
-      monthly: monthlyEarnings,
-      weekly: weeklyEarnings,
-      pending: pendingBookings,
-    };
+  // Calculate aggregated earnings from all locations
+  const aggregatedEarnings = {
+    total: locations.reduce((sum, loc) => sum + loc.earnings.total, 0) || totalEarnings,
+    thisMonth: locations.reduce((sum, loc) => sum + loc.earnings.thisMonth, 0) || monthlyEarnings,
+    thisWeek: locations.reduce((sum, loc) => sum + loc.earnings.thisWeek, 0) || weeklyEarnings,
   };
 
-  const displayData = getDisplayData();
-  const selectedLocation = selectedLocationId && selectedLocationId !== 0 ? locations.find((loc) => loc.id === selectedLocationId) : null;
-  const menuItems = [
+  // Get current earnings based on selected location
+  const currentEarnings = selectedLocationId
+    ? locations.find(loc => loc.id === selectedLocationId)?.earnings || aggregatedEarnings
+    : aggregatedEarnings;
+
+  // Get current location name
+  const currentLocationName = selectedLocationId
+    ? locations.find(loc => loc.id === selectedLocationId)?.name
+    : "All Locations";
+  const managementItems = [
     {
       id: "calendar",
       title: "Manage Calendar",
@@ -109,13 +90,24 @@ export function SalonOwnerDashboardScreen({
       color: "bg-green-100",
       iconColor: "text-green-600",
     },
+  ];
+
+  const offersAndServicesItems = [
     {
-      id: "offers",
-      title: "Add Offers & Deals",
-      description: "Create discounts and promotions",
+      id: "offers-management",
+      title: "Offers Management",
+      description: "Create and manage discounts & promotions",
       icon: Gift,
       color: "bg-orange-100",
       iconColor: "text-orange-600",
+    },
+    {
+      id: "services",
+      title: "Manage Services",
+      description: "Add and organize your services",
+      icon: Sparkles,
+      color: "bg-indigo-100",
+      iconColor: "text-indigo-600",
     },
     {
       id: "gallery",
@@ -133,30 +125,27 @@ export function SalonOwnerDashboardScreen({
       color: "bg-teal-100",
       iconColor: "text-teal-600",
     },
+  ];
+
+  const analyticsItems = [
     {
       id: "earnings",
       title: "Track Earnings",
-      description: "View your revenue analytics",
+      description: "View revenue analytics (Daily & Service-wise)",
       icon: TrendingUp,
       color: "bg-green-100",
       iconColor: "text-green-600",
     },
-    {
-      id: "settings",
-      title: "Settings",
-      description: "Salon info & preferences",
-      icon: Settings,
-      color: "bg-gray-100",
-      iconColor: "text-gray-600",
-    },
   ];
+
+  const menuItems = [...managementItems, ...offersAndServicesItems, ...analyticsItems];
 
   return (
     <div className="h-screen flex flex-col bg-gradient-to-b from-[#F8F7FF] to-white">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#6C4AB6] to-[#8B5FBF] text-white px-6 py-8">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex-1">
+          <div>
             <p className="text-sm opacity-90">Welcome back</p>
             <h1 className="text-2xl font-bold">{salonName}</h1>
           </div>
@@ -169,54 +158,30 @@ export function SalonOwnerDashboardScreen({
           </button>
         </div>
 
-        {/* Location Dropdown */}
-        {locations.length > 0 && (
-          <div className="relative">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-full bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg flex items-center justify-between transition-colors"
-            >
-              <span className="text-sm font-medium">
-                {selectedLocationId === null || selectedLocationId === 0
-                  ? "All Locations"
-                  : selectedLocation?.name || "Select Location"}
-              </span>
-              <ChevronDown className="w-4 h-4" />
-            </button>
-
-            {/* Dropdown Menu */}
-            {dropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white text-[#1F1F1F] rounded-lg shadow-lg z-50 overflow-hidden">
-                <button
-                  onClick={() => {
-                    setSelectedLocationId(0);
-                    setDropdownOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-3 hover:bg-[#F8F7FF] transition-colors text-sm font-medium ${
-                    (selectedLocationId === null || selectedLocationId === 0) ? "bg-[#E0D9F0]" : ""
-                  }`}
-                >
-                  All Locations
-                </button>
-                {locations.map((location) => (
-                  <button
-                    key={location.id}
-                    onClick={() => {
-                      setSelectedLocationId(location.id);
-                      setDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-4 py-3 hover:bg-[#F8F7FF] transition-colors text-sm border-t border-[#E0D9F0] ${
-                      selectedLocationId === location.id ? "bg-[#E0D9F0]" : ""
-                    }`}
-                  >
-                    <p className="font-medium">{location.name}</p>
-                    <p className="text-xs text-[#8A8A8A]">{location.address}</p>
-                  </button>
-                ))}
-              </div>
-            )}
+        {/* Location Selector */}
+        <div className="mt-4">
+          <div className="flex items-center gap-2 mb-2">
+            <MapPin className="w-4 h-4" />
+            <label className="text-sm font-medium">Select Location:</label>
           </div>
-        )}
+          <select
+            value={selectedLocationId ?? "all"}
+            onChange={(e) => setSelectedLocationId(e.target.value === "all" ? null : Number(e.target.value))}
+            className="w-full bg-white/20 text-white px-4 py-2 rounded-lg border border-white/30 focus:outline-none focus:border-white transition-colors text-sm"
+          >
+            <option value="all" className="bg-[#6C4AB6] text-white">All Locations</option>
+            {locations.map((location) => (
+              <option key={location.id} value={location.id} className="bg-[#6C4AB6] text-white">
+                {location.name}
+              </option>
+            ))}
+          </select>
+          {selectedLocationId && (
+            <p className="text-xs opacity-80 mt-2">
+              📍 {locations.find((loc) => loc.id === selectedLocationId)?.address}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Scrollable Content */}
@@ -233,11 +198,11 @@ export function SalonOwnerDashboardScreen({
                 <div className="flex items-center justify-between mb-2">
                   <Calendar className="w-5 h-5 text-[#6C4AB6]" />
                   <span className="text-xs font-semibold text-[#FF6B6B] bg-[#FFE0E0] px-2 py-1 rounded-full">
-                    {displayData.pending}
+                    {pendingBookings}
                   </span>
                 </div>
                 <p className="text-2xl font-bold text-[#1F1F1F]">
-                  {displayData.pending}
+                  {pendingBookings}
                 </p>
                 <p className="text-xs text-[#8A8A8A]">Pending Bookings</p>
               </div>
@@ -248,7 +213,7 @@ export function SalonOwnerDashboardScreen({
                   <DollarSign className="w-5 h-5 text-[#10B981]" />
                 </div>
                 <p className="text-2xl font-bold text-[#1F1F1F]">
-                  ₹{displayData.weekly.toLocaleString()}
+                  ₹{currentEarnings.thisWeek.toLocaleString()}
                 </p>
                 <p className="text-xs text-[#8A8A8A]">This Week</p>
               </div>
@@ -261,12 +226,14 @@ export function SalonOwnerDashboardScreen({
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-sm opacity-90">Monthly Earnings</p>
-                  <p className="text-3xl font-bold">₹{displayData.monthly.toLocaleString()}</p>
+                  <p className="text-3xl font-bold">₹{currentEarnings.thisMonth.toLocaleString()}</p>
                 </div>
                 <TrendingUp className="w-10 h-10 opacity-50" />
               </div>
               <div className="bg-white/20 rounded-lg p-3 mt-4">
-                <p className="text-xs opacity-90">Total Earnings: ₹{displayData.total.toLocaleString()}</p>
+                <p className="text-xs opacity-90">
+                  {selectedLocationId ? "Location" : "Total"} Earnings: ₹{currentEarnings.total.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
@@ -277,7 +244,7 @@ export function SalonOwnerDashboardScreen({
               Manage Your Salon
             </h2>
             <div className="space-y-3">
-              {menuItems.map((item) => (
+              {managementItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => onNavigate(item.id)}
@@ -300,6 +267,94 @@ export function SalonOwnerDashboardScreen({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Offers & Services Section */}
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-[#1F1F1F] mb-4">
+              Offers & Services
+            </h2>
+            <div className="space-y-3">
+              {offersAndServicesItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onNavigate(item.id)}
+                  className="w-full bg-white border-2 border-[#E0D9F0] rounded-xl p-4 hover:border-[#6C4AB6] hover:shadow-md transition-all flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3 text-left">
+                    <div className={`${item.color} rounded-lg p-3`}>
+                      <item.icon className={`w-6 h-6 ${item.iconColor}`} />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-[#1F1F1F] text-sm">
+                        {item.title}
+                      </p>
+                      <p className="text-xs text-[#8A8A8A]">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-[#8A8A8A]" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Analytics Section */}
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-[#1F1F1F] mb-4">
+              Analytics & Reports
+            </h2>
+            <div className="space-y-3">
+              {analyticsItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onNavigate(item.id)}
+                  className="w-full bg-white border-2 border-[#E0D9F0] rounded-xl p-4 hover:border-[#6C4AB6] hover:shadow-md transition-all flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3 text-left">
+                    <div className={`${item.color} rounded-lg p-3`}>
+                      <item.icon className={`w-6 h-6 ${item.iconColor}`} />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-[#1F1F1F] text-sm">
+                        {item.title}
+                      </p>
+                      <p className="text-xs text-[#8A8A8A]">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-[#8A8A8A]" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Settings Section */}
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-[#1F1F1F] mb-4">
+              Settings
+            </h2>
+            <button
+              onClick={() => onNavigate("settings")}
+              className="w-full bg-white border-2 border-[#E0D9F0] rounded-xl p-4 hover:border-[#6C4AB6] hover:shadow-md transition-all flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3 text-left">
+                <div className="bg-gray-100 rounded-lg p-3">
+                  <Settings className="w-6 h-6 text-gray-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-[#1F1F1F] text-sm">
+                    Salon Settings
+                  </p>
+                  <p className="text-xs text-[#8A8A8A]">
+                    General preferences and information
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-[#8A8A8A]" />
+            </button>
           </div>
         </div>
       </div>

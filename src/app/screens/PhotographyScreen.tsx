@@ -1,4 +1,5 @@
 import { ChevronLeft, MapPin, Star, Phone, Zap } from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface Photographer {
   id: number;
@@ -20,6 +21,8 @@ interface PhotographyScreenProps {
 }
 
 export function PhotographyScreen({ onBack, onPhotographerClick }: PhotographyScreenProps) {
+  const [selectedFilter, setSelectedFilter] = useState("All");
+
   const photographers: Photographer[] = [
     {
       id: 1,
@@ -31,7 +34,7 @@ export function PhotographyScreen({ onBack, onPhotographerClick }: PhotographySc
       phone: "+91 98765 43210",
       image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500&h=500&fit=crop",
       portfolio: 150,
-      eventTypes: ["Weddings", "Pre-wedding", "Events", "Portraits"],
+      eventTypes: ["Weddings", "Pre-wedding", "Events", "Portraits", "Birthdays"],
       priceRange: "₹50,000 - ₹2,00,000",
     },
     {
@@ -75,6 +78,38 @@ export function PhotographyScreen({ onBack, onPhotographerClick }: PhotographySc
     },
   ];
 
+  const filterChips = [
+    "All",
+    "Wedding",
+    "Birthdays",
+    "Pre-wedding",
+    "Events",
+    "Portraits",
+    "Corporate",
+    "Family",
+  ];
+
+  const normalizedEvent = (event: string) => event.toLowerCase().trim();
+
+  const filteredPhotographers = useMemo(() => {
+    if (selectedFilter === "All") return photographers;
+
+    return photographers.filter((photographer) => {
+      const events = photographer.eventTypes.map(normalizedEvent);
+      const selected = normalizedEvent(selectedFilter);
+
+      if (selected === "wedding") {
+        return events.some((event) => event.includes("wedding"));
+      }
+
+      if (selected === "birthdays") {
+        return events.some((event) => event.includes("birthday") || event.includes("babies"));
+      }
+
+      return events.some((event) => event.includes(selected));
+    });
+  }, [photographers, selectedFilter]);
+
   return (
     <div className="pb-20">
       {/* Header */}
@@ -92,11 +127,12 @@ export function PhotographyScreen({ onBack, onPhotographerClick }: PhotographySc
 
       {/* Filter Bar */}
       <div className="px-6 py-4 flex gap-2 overflow-x-auto">
-        {["Weddings", "Events", "Portraits", "All"].map((filter) => (
+        {filterChips.map((filter) => (
           <button
             key={filter}
+            onClick={() => setSelectedFilter(filter)}
             className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
-              filter === "All"
+              selectedFilter === filter
                 ? "bg-[#6C4AB6] text-white"
                 : "bg-[#F3EEFF] text-[#6C4AB6]"
             }`}
@@ -108,12 +144,14 @@ export function PhotographyScreen({ onBack, onPhotographerClick }: PhotographySc
 
       {/* Photographers List */}
       <div className="px-6 pb-6 space-y-4">
-        {photographers.map((photographer) => (
-          <button
+        {filteredPhotographers.map((photographer) => (
+          <div
             key={photographer.id}
             onClick={() => onPhotographerClick?.(photographer.id)}
-            className="bg-white rounded-2xl overflow-hidden active:scale-[0.98] transition-all w-full flex flex-col h-96"
+            className="bg-white rounded-2xl overflow-hidden active:scale-[0.98] transition-all w-full flex flex-col min-h-[390px] border-2 border-[#E0D9F0]"
             style={{ boxShadow: "0 2px 12px rgba(108, 74, 182, 0.08)" }}
+            role="button"
+            tabIndex={0}
           >
             {/* Image */}
             <div className="relative h-40 bg-gray-200 flex-shrink-0">
@@ -121,7 +159,7 @@ export function PhotographyScreen({ onBack, onPhotographerClick }: PhotographySc
             </div>
 
             {/* Content */}
-            <div className="p-4 flex flex-col">
+            <div className="p-4 flex flex-col flex-1">
               <h3 className="text-lg font-bold text-[#1F1F1F] mb-2 line-clamp-2">{photographer.name}</h3>
 
               {/* Rating */}
@@ -162,13 +200,23 @@ export function PhotographyScreen({ onBack, onPhotographerClick }: PhotographySc
               </div>
 
               {/* Contact Button */}
-              <button className="bg-gradient-to-r from-[#6C4AB6] to-[#3D2C8D] text-white px-6 py-1.5 rounded-lg font-semibold flex items-center justify-center gap-2 active:opacity-90 transition-opacity mt-auto text-sm">
+              <a
+                href={`tel:${photographer.phone.replace(/\s+/g, "")}`}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gradient-to-r from-[#6C4AB6] to-[#3D2C8D] text-white px-6 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 active:opacity-90 transition-opacity mt-auto text-sm flex-shrink-0"
+              >
                 <Phone className="w-4 h-4" />
                 Inquire Now
-              </button>
+              </a>
             </div>
-          </button>
+          </div>
         ))}
+
+        {filteredPhotographers.length === 0 && (
+          <div className="text-center py-10 text-[#8A8A8A]">
+            No photographers found for this category.
+          </div>
+        )}
       </div>
     </div>
   );

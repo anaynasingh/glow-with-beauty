@@ -374,6 +374,8 @@ export interface Staff {
   phone: string;
   email: string;
   joinDate: string;
+  locationId?: number;
+  locationName?: string;
 }
 
 export interface Offer {
@@ -495,8 +497,8 @@ export const salonOwners: SalonOwner[] = [
       sunday: { open: "11:00 AM", close: "8:00 PM" },
     },
     staff: [
-      { id: 1, name: "Priya Sharma", specialization: "Hair Styling", experience: "8 years", phone: "9111111111", email: "priya@glamour.com", joinDate: "2020-05-10" },
-      { id: 2, name: "Raj Malhotra", specialization: "Hair Color", experience: "5 years", phone: "9111111112", email: "raj@glamour.com", joinDate: "2022-03-15" },
+      { id: 1, name: "Priya Sharma", specialization: "Hair Styling", experience: "8 years", phone: "9111111111", email: "priya@glamour.com", joinDate: "2020-05-10", locationId: 101, locationName: "Glamour Studio - Downtown" },
+      { id: 2, name: "Raj Malhotra", specialization: "Hair Color", experience: "5 years", phone: "9111111112", email: "raj@glamour.com", joinDate: "2022-03-15", locationId: 102, locationName: "Glamour Studio - West Side" },
     ],
     offers: [
       { id: 1, title: "20% off on Hair Services", description: "Get 20% discount on all hair services", discount: 20, validFrom: "2026-02-01", validTill: "2026-02-28", applicableServices: [1, 2, 3] },

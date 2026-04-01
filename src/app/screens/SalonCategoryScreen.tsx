@@ -1,169 +1,217 @@
-import { Search, Heart, User } from "lucide-react";
+
+import { Star, MapPin, Gift } from "lucide-react";
 import { useState } from "react";
-import { SalonCard } from "../components/SalonCard";
 import { salons } from "../data/mockData";
-import { useLanguage } from "../i18n/LanguageContext";
+import { SalonCard } from "../components/SalonCard";
 
 interface SalonCategoryScreenProps {
   onBack: () => void;
   onSalonClick: (salonId: number) => void;
-  onServiceClick?: (serviceName: string) => void;
-  onFavoriteSalonsClick?: () => void;
-  onAccountClick?: () => void;
 }
 
-export function SalonCategoryScreen({
-  onBack,
-  onSalonClick,
-  onServiceClick,
-  onFavoriteSalonsClick,
-  onAccountClick,
-}: SalonCategoryScreenProps) {
-  const { t } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+const services = [
+  {
+    name: "Haircut",
+    image: "https://images.unsplash.com/photo-1654097801176-cb1795fd0c5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    name: "Shave & Beard",
+    image: "https://images.unsplash.com/photo-1621607512022-6aecc4fed814?auto=format&fit=crop&w=400&q=80",
+  },
+  {
+    name: "Facial",
+    image: "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    name: "Detan",
+    image: "https://slimmingsolutionsspa.com/wp-content/uploads/2025/07/Chemical-Peels-Risks-and-Side-Effects.jpg",
+  },
+  {
+    name: "Hair Color",
+    image: "https://images.unsplash.com/photo-1605980625982-b128a7e7fde2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    name: "Mani-Pedi",
+    image: "https://images.unsplash.com/photo-1737214475335-8ed64d91f473?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    name: "Keratin Hair Spa",
+    image: "https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+  },
+  {
+    name: "Head Massage",
+    image: "https://images.unsplash.com/photo-1598901986949-f593ff2a31a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  }
+];
 
-  // Custom categories for men
-  const menCategories = [
-    {
-      name: "Beard Grooming",
-      image: "https://images.unsplash.com/photo-1621607512022-6aecc4fed814?auto=format&fit=crop&w=400&q=80"
-    },
-    {
-      name: "Face Massage",
-      image: "https://thumbs.dreamstime.com/b/man-receiving-head-massage-medical-office-51614593.jpg"
-    },
-    {
-      name: "Haircut",
-      image: "https://tse1.explicit.bing.net/th/id/OIP.hgRSJdaxN1c6UZ63pHR4VgHaD4?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3"
-    },
-    {
-      name: "Beard Trimming",
-      image: "https://tse1.mm.bing.net/th/id/OIP.nNk4WkJf15U9xKJ1RS1KPwHaE7?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3"
-    },
-    {
-      name: "Hair Coloring",
-      image: "https://tse3.mm.bing.net/th/id/OIP.Gq1i64GgOt_mnheWYLIPsgHaE7?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3"
-    },
-    {
-      name: "Shaving",
-      image: "https://tse4.mm.bing.net/th/id/OIP.psUDhiH06F70GevV7F2e0QHaE8?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3"
-    },
-    {
-      name: "Eyebrow Plucking",
-      image: "https://browheaven.com/wp-content/uploads/2022/03/2-1024x577.png"
-    },
-    {
-      name: "Head Massage",
-      image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/dpr_2,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/growth/luminosity/1660029164522-d7a9e5.png"
-    },
+export function SalonCategoryScreen({ onBack, onSalonClick }: SalonCategoryScreenProps) {
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [distanceFilter, setDistanceFilter] = useState(15);
+  const [showOffers, setShowOffers] = useState(false);
+
+  const filterCategories = [
+    "Popular",
+    "Best Rated",
+    "Price: Low to High",
+    "Trending",
+    "Affordable",
+    "Luxury",
+    "Quick Service",
+    "Reviews",
+    "Offers",
   ];
 
-  const filteredServices = menCategories.map((cat, idx) => ({
-    id: 1000 + idx,
-    name: cat.name,
-    image: cat.image,
-  }));
-
-  // Helper function to check if a salon offers a service matching the category
-  const salonOffersCategory = (salon: typeof salons[0], categoryName: string): boolean => {
-    if (!salon.services) return false;
-    return salon.services.some((service) =>
-      service.name.toLowerCase().includes(categoryName.toLowerCase()) ||
-      categoryName.toLowerCase().includes(service.name.toLowerCase().split("-")[0].trim())
-    );
+  const toggleFilter = (filter: string) => {
+    if (filter === "Offers") {
+      setShowOffers(!showOffers);
+    } else {
+      setSelectedFilters(prev =>
+        prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
+      );
+    }
   };
 
-  // Filter salons based on selected category
-  const displayedSalons = selectedCategory
-    ? salons.filter((salon) => salonOffersCategory(salon, selectedCategory))
-    : salons;
+  // Filter salons based on selected service, filters, offers, and distance
+  const filteredSalons = salons.filter(salon => {
+    // Filter by distance
+    const salonDistanceNum = parseFloat(salon.distance);
+    if (salonDistanceNum > distanceFilter) return false;
+
+    // Filter by offers if toggled
+    if (showOffers && !salon.offer) return false;
+
+    // Filter by selected service
+    if (selectedService) {
+      const hasService = salon.services?.some(s => 
+        s.name.toLowerCase().includes(selectedService.toLowerCase())
+      );
+      if (!hasService) return false;
+    }
+
+    // Filter by selected filter categories
+    if (selectedFilters.length > 0) {
+      if (selectedFilters.includes("Popular") && salon.rating < 4.5) return false;
+      if (selectedFilters.includes("Best Rated") && salon.rating < 4.7) return false;
+      if (selectedFilters.includes("Trending") && (salon.rating < 4.6 || salon.reviewCount < 100)) return false;
+      if (selectedFilters.includes("Affordable")) {
+        // Check for budget-friendly price ranges (₹ or ₹₹)
+        if (!salon.priceRange.includes("₹") || salon.priceRange.includes("₹₹₹₹")) return false;
+      }
+      if (selectedFilters.includes("Luxury")) {
+        // High-end salons with premium pricing and high ratings
+        if (salon.rating < 4.7 || !salon.priceRange.includes("₹₹₹")) return false;
+      }
+      if (selectedFilters.includes("Quick Service")) {
+        // Salons with faster service availability
+        const salonDist = parseFloat(salon.distance);
+        if (salonDist > 5) return false;
+      }
+      if (selectedFilters.includes("Reviews") && salon.reviewCount < 50) return false;
+    }
+
+    return true;
+  });
+
+  const priceScore = (priceRange: string) => priceRange.replace(/[^₹]/g, "").length;
+
+  const displayedSalons = selectedFilters.includes("Price: Low to High")
+    ? [...filteredSalons].sort((a, b) => priceScore(a.priceRange) - priceScore(b.priceRange))
+    : filteredSalons;
 
   return (
-    <div className="pb-20 bg-gradient-to-b from-[#F8F7FF] to-white min-h-screen">
-      {/* Header with Search */}
-      <div className="px-6 pt-8 pb-6">
-        {/* Back Button */}
-        <button onClick={onBack} className="mb-4 text-[#6C4AB6] font-medium text-sm">
-          ← Back
-        </button>
+    <div className="min-h-screen bg-white pb-20">
+      <button onClick={onBack} className="m-4 text-[#6C4AB6] font-medium">← Back</button>
 
-        {/* Search Bar with Favorite and Account Icons */}
-        <div className="relative mb-5 flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
-            <input
-              type="text"
-              placeholder={t("searchPlaceholder")}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white rounded-2xl pl-12 pr-4 py-4 text-sm border border-[rgba(108,74,182,0.1)] focus:outline-none focus:border-[#6C4AB6] transition-colors"
-              style={{ boxShadow: "0 2px 12px rgba(108, 74, 182, 0.08)" }}
-            />
-          </div>
-          <button
-            onClick={onFavoriteSalonsClick}
-            className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-[rgba(108,74,182,0.1)] hover:border-[#6C4AB6] transition-colors active:scale-[0.95]"
-            style={{ boxShadow: "0 2px 12px rgba(108, 74, 182, 0.08)" }}
-          >
-            <Heart className="w-5 h-5 text-[#F4A6C1]" />
-          </button>
-          <button
-            onClick={onAccountClick}
-            className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-[rgba(108,74,182,0.1)] hover:border-[#6C4AB6] transition-colors active:scale-[0.95]"
-            style={{ boxShadow: "0 2px 12px rgba(108, 74, 182, 0.08)" }}
-          >
-            <User className="w-5 h-5 text-[#6C4AB6]" />
-          </button>
-        </div>
-      </div>
-
-      {/* Top Categories - Horizontal Scroll */}
-      <div className="mb-8">
-        <h3 className="text-[#1F1F1F] px-6 mb-4">{t("topCategories")}</h3>
-        <div className="flex gap-4 overflow-x-auto px-6 pb-2 no-scrollbar">
-          {filteredServices.map((service) => (
-            <div key={service.id} className="flex flex-col items-center flex-shrink-0">
+      {/* Service Selection Section */}
+      <div className="px-4 mb-6">
+        <h2 className="text-xl font-bold mb-4 text-[#1F1F1F]">What service do you need?</h2>
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-4 min-w-max">
+            {services.map((svc) => (
               <button
-                onClick={() => {
-                  setSelectedCategory(
-                    selectedCategory === service.name ? null : service.name
-                  );
-                  onServiceClick?.(service.name);
-                }}
-                className={`flex flex-col items-center gap-2 hover:opacity-80 transition-all ${
-                  selectedCategory === service.name
-                    ? "ring-2 ring-[#6C4AB6] rounded-2xl"
-                    : ""
+                key={svc.name}
+                onClick={() => setSelectedService(selectedService === svc.name ? null : svc.name)}
+                className={`flex flex-col items-center min-w-[72px] focus:outline-none ${
+                  selectedService === svc.name ? "border-b-2 border-[#6C4AB6]" : ""
                 }`}
               >
-                <img
-                  src={service.image}
-                  alt={service.name}
-                  className={`w-24 h-24 object-cover rounded-2xl shadow-md ${
-                    selectedCategory === service.name ? "ring-2 ring-[#6C4AB6]" : ""
+                <div
+                  className={`w-14 h-14 rounded-lg overflow-hidden mb-1 border ${
+                    selectedService === svc.name ? "border-[#6C4AB6]" : "border-gray-200"
                   }`}
-                />
-                <p className="text-xs text-[#1F1F1F] text-center max-w-[100px] font-medium">
-                  {service.name}
-                </p>
+                >
+                  <img
+                    src={svc.image}
+                    alt={svc.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="text-xs text-center mt-1 whitespace-nowrap text-[#1F1F1F]">
+                  {svc.name}
+                </span>
               </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Salon Near You - Vertical List */}
-      <div className="px-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[#1F1F1F]">
-            {selectedCategory ? `Salons with ${selectedCategory}` : t("salonsNearYou")}
-          </h3>
+      {/* Filter Section */}
+      <div className="px-4 mb-6">
+        {/* Horizontal Scrollable Filter Chips */}
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 pb-2 min-w-max">
+            {filterCategories.map((filter) => (
+              <button
+                key={filter}
+                onClick={() => toggleFilter(filter)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                  selectedFilters.includes(filter) || (filter === "Offers" && showOffers)
+                    ? "bg-[#6C4AB6] text-white"
+                    : "bg-[#FFF0F5] text-[#FF6B9D] border border-[#FFD9E8]"
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
         </div>
+      </div>
+
+      {/* Distance Slider Filter */}
+      <div className="px-4 mb-6 bg-[#F8F7FF] rounded-xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-sm font-semibold text-[#1F1F1F]">Distance: {distanceFilter} km</label>
+          <MapPin className="w-4 h-4 text-[#6C4AB6]" />
+        </div>
+        <input
+          type="range"
+          min="1"
+          max="50"
+          value={distanceFilter}
+          onChange={(e) => setDistanceFilter(Number(e.target.value))}
+          className="w-full h-1 bg-[#E0D9F0] rounded-lg appearance-none cursor-pointer accent-[#6C4AB6]"
+        />
+        <div className="flex justify-between text-xs text-[#8A8A8A] mt-2">
+          <span>1 km</span>
+          <span>50 km</span>
+        </div>
+      </div>
+
+      {/* Salons Listing */}
+      <div className="px-4">
+        <h3 className="text-lg font-bold mb-4 text-[#1F1F1F]">
+          {selectedService ? `${selectedService} Salons` : "Salons Near You"} ({displayedSalons.length})
+        </h3>
+        
         {displayedSalons.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {displayedSalons.map((salon) => (
-              <div key={salon.id}>
+              <button
+                key={salon.id}
+                onClick={() => onSalonClick(salon.id)}
+                className="w-full text-left active:scale-[0.98] transition-transform"
+              >
                 <SalonCard
                   name={salon.name}
                   rating={salon.rating}
@@ -171,16 +219,16 @@ export function SalonCategoryScreen({
                   priceRange={salon.priceRange}
                   distance={salon.distance}
                   offer={salon.offer}
-                  image={salon.image}
+                  image={salon.image || ""}
                   onClick={() => onSalonClick(salon.id)}
-                  horizontal={false}
                 />
-              </div>
+              </button>
             ))}
           </div>
         ) : (
-          <div className="text-center py-8">
-            <p className="text-[#8A8A8A]">No salons found for this service</p>
+          <div className="text-center py-12">
+            <p className="text-[#8A8A8A] mb-2">No salons found</p>
+            <p className="text-xs text-[#8A8A8A]">Try adjusting your filters or selecting a different service</p>
           </div>
         )}
       </div>
