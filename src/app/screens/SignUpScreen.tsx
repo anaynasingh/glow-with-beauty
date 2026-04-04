@@ -140,7 +140,7 @@ export function SignUpScreen({ onSignUp, onBack }: SignUpScreenProps) {
                   </div>
                 </button>
 
-                {/* Salon Owner Role Card */}
+                {/* Services Role Card */}
                 <button
                   onClick={() => handleRoleSelect("salon")}
                   className="w-full p-6 border-2 border-[#E0D9F0] rounded-2xl hover:border-[#6C4AB6] hover:bg-[#F9F7FF] transition-all text-left"
@@ -150,8 +150,8 @@ export function SignUpScreen({ onSignUp, onBack }: SignUpScreenProps) {
                       <Store className="w-6 h-6 text-[#6C4AB6]" />
                     </div>
                     <div>
-                      <h2 className="text-[#1F1F1F] font-semibold text-lg">Salon Owner</h2>
-                      <p className="text-[#8A8A8A] text-sm mt-1">Manage your salon, staff, and grow your business</p>
+                      <h2 className="text-[#1F1F1F] font-semibold text-lg">Services</h2>
+                      <p className="text-[#8A8A8A] text-sm mt-1">Manage your services, staff, and grow your business</p>
                     </div>
                   </div>
                 </button>
@@ -180,12 +180,12 @@ export function SignUpScreen({ onSignUp, onBack }: SignUpScreenProps) {
                   )}
                 </div>
                 <h1 className="text-[#1F1F1F] text-2xl mb-2">
-                  {selectedRole === "user" ? "Customer Sign Up" : "Salon Owner Sign Up"}
+                  {selectedRole === "user" ? "Customer Sign Up" : "Services Sign Up"}
                 </h1>
                 <p className="text-[#8A8A8A] text-sm">
                   {selectedRole === "user" 
                     ? "Create your account to book services" 
-                    : "Register your salon with us"}
+                    : "Register your services with us"}
                 </p>
               </div>
 

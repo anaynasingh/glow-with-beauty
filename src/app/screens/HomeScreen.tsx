@@ -76,19 +76,19 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
     },
     {
       id: 6,
-      name: "Photography",
+      name: "Photog",
       icon: Camera,
       color: "#6C4AB6",
       image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=compress&fit=crop&w=800&q=80",
-      description: "Professional photography services"
+      description: "Professional photog services"
     },
     {
       id: 7,
-      name: "Flower Decoration",
+      name: "Florist",
       icon: Flower,
       color: "#F4A6C1",
       image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=500&h=500&fit=crop",
-      description: "Event and decor flowers"
+      description: "Fresh floral decor and arrangements"
     },
     {
       id: 8,
@@ -138,6 +138,33 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
   // Use homeServices for the top categories section
   const groupedServices = homeServices;
 
+  const sponsoredAds = [
+    {
+      id: "ad-1",
+      title: "Keratin Week",
+      subtitle: "Flat 30% off on premium smoothing",
+      cta: "Book now",
+      bg: "from-[#FFE9F2] to-[#FFF6FA]",
+      text: "#9F2D66",
+    },
+    {
+      id: "ad-2",
+      title: "Bridal Ready",
+      subtitle: "Makeup + hairstyle combo packages",
+      cta: "See package",
+      bg: "from-[#FFF6E8] to-[#FFFDF7]",
+      text: "#9A5A00",
+    },
+    {
+      id: "ad-3",
+      title: "Spa Recharge",
+      subtitle: "Buy 1 get 1 on weekday massages",
+      cta: "Claim offer",
+      bg: "from-[#E9F8FF] to-[#F5FCFF]",
+      text: "#12587B",
+    },
+  ];
+
   // State for selected broad category
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -184,7 +211,7 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
       <div className="mb-6">
         <h3 className="text-[#1F1F1F] px-6 mb-4">{t("topCategories")}</h3>
         <div className="px-4">
-          <div className="grid grid-cols-4 gap-6 p-2">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-5 p-2">
             {groupedServices.map((cat) => (
               <div key={cat.name} className="flex justify-center items-center">
                 <ServiceCard
@@ -195,6 +222,33 @@ export function HomeScreen({ onServiceClick, onSalonClick, onSpecialOffersClick,
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Sponsored Ads */}
+      <div className="px-6 mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-[#1F1F1F]">Sponsored</h3>
+          <span className="text-[11px] uppercase tracking-wide text-[#8A8A8A]">Ads</span>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-1 -mx-6 px-6 no-scrollbar snap-x snap-mandatory">
+          {sponsoredAds.map((ad) => (
+            <div
+              key={ad.id}
+              className={`min-w-[280px] snap-start rounded-2xl border border-white/60 p-4 bg-gradient-to-br ${ad.bg}`}
+              style={{ boxShadow: "0 8px 22px rgba(31, 31, 31, 0.08)" }}
+            >
+              <div className="text-[10px] uppercase tracking-widest text-[#8A8A8A] mb-2">Sponsored</div>
+              <p className="text-lg font-semibold mb-1" style={{ color: ad.text }}>{ad.title}</p>
+              <p className="text-sm text-[#4A4A4A] mb-3">{ad.subtitle}</p>
+              <button
+                className="text-xs px-3 py-1.5 rounded-full text-white"
+                style={{ backgroundColor: ad.text }}
+              >
+                {ad.cta}
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 

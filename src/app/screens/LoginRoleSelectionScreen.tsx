@@ -42,7 +42,7 @@ export function LoginRoleSelectionScreen({
               </div>
             </button>
 
-            {/* Salon Owner Sign In */}
+            {/* Services Sign In */}
             <button
               onClick={onSelectSalonOwner}
               className="w-full p-6 border-2 border-[#E0D9F0] rounded-2xl hover:border-[#6C4AB6] hover:bg-[#F9F7FF] transition-all text-left"
@@ -52,9 +52,9 @@ export function LoginRoleSelectionScreen({
                   <Store className="w-6 h-6 text-[#6C4AB6]" />
                 </div>
                 <div>
-                  <h2 className="text-[#1F1F1F] font-semibold text-lg">Salon Owner</h2>
+                  <h2 className="text-[#1F1F1F] font-semibold text-lg">Services</h2>
                   <p className="text-[#8A8A8A] text-sm mt-1">
-                    Sign in to manage your salon, staff, and earnings
+                    Sign in to manage your services, team, and earnings
                   </p>
                 </div>
               </div>

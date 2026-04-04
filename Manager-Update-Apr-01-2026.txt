@@ -1,0 +1,46 @@
+﻿1. Migrated and integrated all relevant salon-owner changes from the earlier codebase into the correct project and branch (main).
+
+2. Added and wired seller management pages:
+   1. Manage Services
+   2. Upload Photos
+   3. Add Products
+   4. Offers Management
+
+3. Restored and improved multi-location seller dashboard behavior:
+   1. Location dropdown support
+   2. All-locations earnings aggregation
+   3. Location-specific earnings views
+
+4. Enhanced staff management for salon owners:
+   1. Staff-to-location assignment
+   2. Location-based staff filtering
+   3. Persistence of staff updates in app state
+
+5. Expanded mock data to support multi-branch owners and location-aware staff records.
+
+6. Implemented complete filtering systems across core service pages (Salon, Beauty, Spa):
+   1. Service/category chips
+   2. Filter chips
+   3. Distance slider filtering
+   4. Price/logic-based sorting and Offers behavior
+
+7. Fixed Spa page rendering issues and stabilized interactions.
+
+8. Added Men/Women toggle to Beauty at Home with category-specific provider data and views.
+
+9. Added top filter chips to Photography (including Wedding and Birthdays) with working filter logic.
+
+10. Fixed Events and Flower Decoration pages:
+    1. Made buttons/filters functional
+    2. Aligned UI with Salon/Beauty style
+    3. Fixed CTA clipping/collapse issues in cards
+
+11. Updated Marketplace UI to match the same service-page pattern and removed the “What are you shopping for?” section as requested.
+
+12. Ensured all Services-tab buttons route correctly to their corresponding service screens.
+
+13. Refactored card CTA interactions to avoid nested-button issues and improve responsiveness/visibility.
+
+14. Rebuilt and validated after each major update; final build succeeds and all changes are pushed to GitHub.
+
+15. Commit pushed to main: c769c0a3 (includes all updates above).

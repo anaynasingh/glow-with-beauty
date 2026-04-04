@@ -224,8 +224,8 @@ export default function App() {
             else if (categoryName === "Spa") setScreen({ type: "spa-category" });
             else if (categoryName === "Events") setScreen({ type: "events" });
             else if (categoryName === "Beauty at Home") setScreen({ type: "at-home-beauty" });
-            else if (categoryName === "Photography") setScreen({ type: "photography" });
-            else if (categoryName === "Flower Decoration") setScreen({ type: "flower-decoration" });
+            else if (categoryName === "Photography" || categoryName === "Photog") setScreen({ type: "photography" });
+            else if (categoryName === "Flower Decoration" || categoryName === "Florist") setScreen({ type: "flower-decoration" });
             else if (categoryName === "Boutique") setScreen({ type: "boutique" });
             else if (categoryName === "More Services") setScreen({ type: "additional-services" });
             else setScreen({ type: "category", categoryName });
@@ -407,8 +407,8 @@ export default function App() {
         else if (serviceName === "Spa") setScreen({ type: "spa-category" });
         else if (serviceName === "Beauty at Home" || serviceName === "At Home Beauty Services") setScreen({ type: "at-home-beauty" });
         else if (serviceName === "Events") setScreen({ type: "events" });
-        else if (serviceName === "Photography") setScreen({ type: "photography" });
-        else if (serviceName === "Flower Decoration") setScreen({ type: "flower-decoration" });
+        else if (serviceName === "Photography" || serviceName === "Photog") setScreen({ type: "photography" });
+        else if (serviceName === "Flower Decoration" || serviceName === "Florist") setScreen({ type: "flower-decoration" });
         else if (serviceName === "Boutique") setScreen({ type: "boutique" });
       }} />}
       {screen.type === "at-home-beauty" && <AtHomeBeautyScreen onBack={() => setScreen({ type: "home" })} />}

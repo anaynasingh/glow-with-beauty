@@ -10,7 +10,7 @@ export function ServiceCard({ name, image, onClick }: ServiceCardProps) {
   return (
     <button
       onClick={onClick}
-      className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform"
+      className="relative w-full aspect-[0.95] rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform"
       style={{ minWidth: 0 }}
     >
       {/* Background Image */}

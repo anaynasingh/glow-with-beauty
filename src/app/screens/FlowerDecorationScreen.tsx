@@ -171,7 +171,7 @@ export function FlowerDecorationScreen({ onBack, onVendorClick }: FlowerDecorati
           <ChevronLeft className="w-6 h-6" />
           <span>Back</span>
         </button>
-        <h1 className="text-2xl font-bold text-[#1F1F1F] mb-1">Flower Decoration Services</h1>
+        <h1 className="text-2xl font-bold text-[#1F1F1F] mb-1">Florist Services</h1>
         <p className="text-[#8A8A8A] text-sm">Decorate your special moments with flowers</p>
       </div>
 

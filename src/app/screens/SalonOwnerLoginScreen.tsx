@@ -28,9 +28,9 @@ export function SalonOwnerLoginScreen({
           <div className="w-20 h-20 bg-[#F3EEFF] rounded-full flex items-center justify-center mb-4">
             <Store className="w-10 h-10 text-[#6C4AB6]" />
           </div>
-          <h1 className="text-[#1F1F1F] text-2xl mb-2">Salon Owner Sign In</h1>
+          <h1 className="text-[#1F1F1F] text-2xl mb-2">Services Sign In</h1>
           <p className="text-[#8A8A8A] text-sm text-center">
-            Access your salon dashboard and manage your business
+            Access your services dashboard and manage your business
           </p>
         </div>
 

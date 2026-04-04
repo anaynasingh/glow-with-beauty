@@ -47,17 +47,17 @@ export function AdditionalServicesScreen({ onBack, onServiceClick }: AdditionalS
     },
     {
       id: 6,
-      name: "Photography",
+      name: "Photog",
       icon: Camera,
       color: "#6C4AB6",
-      description: "Professional photography services"
+      description: "Professional photog services"
     },
     {
       id: 7,
-      name: "Flower Decoration",
+      name: "Florist",
       icon: Flower,
       color: "#F4A6C1",
-      description: "Event and decor flowers"
+      description: "Fresh floral decor and arrangements"
     },
     {
       id: 8,
