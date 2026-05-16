@@ -1,23 +1,19 @@
-import { Store } from "lucide-react";
-import { useState } from "react";
+import { Scissors } from "lucide-react";
 import { Input } from "../components/ui/input";
 
-interface SalonOwnerLoginScreenProps {
-  onSignIn: (email: string) => void;
+interface FreelancerLoginScreenProps {
+  onSignIn: () => void;
   onBack: () => void;
-  onSignUp?: () => void;
+  onSignUp: () => void;
 }
 
-export function SalonOwnerLoginScreen({
+export function FreelancerLoginScreen({
   onSignIn,
   onBack,
   onSignUp,
-}: SalonOwnerLoginScreenProps) {
-  const [email, setEmail] = useState("");
-
+}: FreelancerLoginScreenProps) {
   return (
     <div className="h-screen flex flex-col bg-white px-6">
-      {/* Header with Back Button */}
       <div className="flex items-center pt-6 pb-4">
         <button
           onClick={onBack}
@@ -28,18 +24,16 @@ export function SalonOwnerLoginScreen({
       </div>
 
       <div className="flex-1 flex flex-col justify-center pb-20">
-        {/* Title */}
         <div className="flex flex-col items-center mb-12">
           <div className="w-20 h-20 bg-[#F3EEFF] rounded-full flex items-center justify-center mb-4">
-            <Store className="w-10 h-10 text-[#6C4AB6]" />
+            <Scissors className="w-10 h-10 text-[#6C4AB6]" />
           </div>
-          <h1 className="text-[#1F1F1F] text-2xl mb-2">Services Sign In</h1>
+          <h1 className="text-[#1F1F1F] text-2xl mb-2">Freelancer Sign In</h1>
           <p className="text-[#8A8A8A] text-sm text-center">
-            Access your services dashboard and manage your business
+            Access your freelancer dashboard and manage your bookings
           </p>
         </div>
 
-        {/* Simple credentials form (mock) */}
         <div className="space-y-4 mb-6">
           <div>
             <label className="block text-sm text-[#1F1F1F] mb-2">
@@ -48,8 +42,6 @@ export function SalonOwnerLoginScreen({
             <Input
               type="text"
               placeholder="Enter your registered email or phone"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-[#F3EEFF] border-none rounded-xl px-4 py-3"
             />
           </div>
@@ -66,28 +58,24 @@ export function SalonOwnerLoginScreen({
         </div>
 
         <button
-          onClick={() => onSignIn(email)}
+          onClick={onSignIn}
           className="w-full bg-[#6C4AB6] text-white rounded-xl py-4 mb-4 active:scale-[0.98] transition-all"
         >
           Sign In
         </button>
 
-        <p className="text-center text-xs text-[#8A8A8A]">
+        <p className="text-center text-xs text-[#8A8A8A] mb-4">
           This is a demo sign-in. In a real app, your credentials would be
           securely verified before accessing the dashboard.
         </p>
 
-        {onSignUp && (
-          <p className="text-center text-sm text-[#8A8A8A] mt-4">
-            Don't have an account?{" "}
-            <button onClick={onSignUp} className="text-[#6C4AB6] font-medium hover:underline">
-              Click here to register
-            </button>
-          </p>
-        )}
+        <p className="text-center text-sm text-[#8A8A8A]">
+          Don't have an account?{" "}
+          <button onClick={onSignUp} className="text-[#6C4AB6] font-medium hover:underline">
+            Click here to register
+          </button>
+        </p>
       </div>
     </div>
   );
 }
-
-

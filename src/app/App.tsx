@@ -31,6 +31,9 @@ import EventsScreen from "./screens/EventsScreen";
 import FlowerDecorationPage from "./screens/FlowerDecorationPage";
 import { SalonOwnerSignUpScreen } from "./screens/SalonOwnerSignUpScreen";
 import { SalonOwnerVerificationScreen } from "./screens/SalonOwnerVerificationScreen";
+import { FreelancerLoginScreen } from "./screens/FreelancerLoginScreen";
+import { FreelancerSignUpScreen } from "./screens/FreelancerSignUpScreen";
+import { FreelancerDashboardScreen } from "./screens/FreelancerDashboardScreen";
 import { SalonOwnerDashboardScreen } from "./screens/SalonOwnerDashboardScreen";
 import { SalonTimingsScreen } from "./screens/SalonTimingsScreen";
 import { SalonStaffScreen } from "./screens/SalonStaffScreen";
@@ -45,7 +48,7 @@ import { BottomNav } from "./components/BottomNav";
 import { Toaster } from "./components/ui/sonner";
 import { toast } from "sonner";
 import { salons, salonOwners, pendingSalonRegistrations } from "./data/mockData";
-import type { SalonOwner, Staff } from "./data/mockData";
+import type { SalonOwner, Staff, StaffRole } from "./data/mockData";
 
 interface Appointment {
   id: number;
@@ -57,14 +60,14 @@ interface Appointment {
   status: "upcoming" | "past";
 }
 
-type UserRole = "user" | "salon-owner" | "admin" | null;
+type UserRole = "user" | "salon-owner" | "freelancer" | "admin" | null;
 
 type Screen =
   | { type: "splash" }
   | { type: "login-role-selection" }
   | { type: "login" }
   | { type: "salon-owner-login" }
-  | { type: "sign-up" }
+  | { type: "sign-up"; initialRole?: "user" | "salon" }
   | { type: "home" }
   | { type: "category"; categoryName: string }
   | { type: "service-listing"; serviceName: string }
@@ -113,6 +116,10 @@ type Screen =
   | { type: "salon-gallery" }
   | { type: "salon-products" }
   | { type: "salon-settings" }
+  // Freelancer Screens
+  | { type: "freelancer-login" }
+  | { type: "freelancer-signup" }
+  | { type: "freelancer-dashboard" }
   // Admin Screens
   | { type: "admin-dashboard" };
 
@@ -129,6 +136,10 @@ export default function App() {
   const [currentUserName, setCurrentUserName] = useState("");
   const [currentUserEmail, setCurrentUserEmail] = useState("");
   const [currentUserPhone, setCurrentUserPhone] = useState("");
+  const [freelancerName, setFreelancerName] = useState("");
+  const [freelancerServices, setFreelancerServices] = useState("");
+  const [currentStaffRole, setCurrentStaffRole] = useState<StaffRole>("owner");
+  const [currentStaffName, setCurrentStaffName] = useState("");
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -175,35 +186,76 @@ export default function App() {
             setUserRole("salon-owner");
             setScreen({ type: "salon-owner-login" });
           }}
-          onBack={() => setScreen({ type: "splash" })}
+          onSelectFreelancer={() => {
+            setUserRole("freelancer");
+            setScreen({ type: "freelancer-login" });
+          }}
+          onBack={() => setScreen({ type: "sign-up" })}
         />
       )}
 
       {screen.type === "login" && (
         <LoginScreen
           onLogin={() => setScreen({ type: "home" })}
-          onSignUp={() => setScreen({ type: "sign-up" })}
+          onSignUp={() => setScreen({ type: "sign-up", initialRole: "user" })}
         />
       )}
 
       {screen.type === "salon-owner-login" && (
         <SalonOwnerLoginScreen
-          onSignIn={() => {
-            const approvedSalon = allSalons.find((salon) => salon.status === "approved");
-            if (approvedSalon) {
-              setCurrentSalonId(approvedSalon.id);
+          onSignIn={(email) => {
+            let foundRole: StaffRole = "owner";
+            let foundName = "";
+            let foundSalonId: number | null = null;
+
+            outer: for (const salon of allSalons) {
+              if (salon.email?.toLowerCase() === email.toLowerCase()) {
+                foundRole = "owner";
+                foundName = salon.shopName;
+                foundSalonId = salon.id;
+                break;
+              }
+              for (const location of salon.locations || []) {
+                const matchingStaff = (location.staff || []).find(
+                  (s) => s.email?.toLowerCase() === email.toLowerCase()
+                );
+                if (matchingStaff) {
+                  foundRole = matchingStaff.role;
+                  foundName = matchingStaff.name;
+                  foundSalonId = salon.id;
+                  break outer;
+                }
+              }
             }
+
+            if (!foundSalonId) {
+              const approvedSalon = allSalons.find((s) => s.status === "approved");
+              foundSalonId = approvedSalon?.id || null;
+              foundRole = "owner";
+            }
+
+            setCurrentStaffRole(foundRole);
+            setCurrentStaffName(foundName);
+            if (foundSalonId) setCurrentSalonId(foundSalonId);
             setScreen({ type: "salon-owner-dashboard" });
           }}
           onBack={() => setScreen({ type: "login-role-selection" })}
+          onSignUp={() => setScreen({ type: "sign-up", initialRole: "salon" })}
         />
       )}
 
-      {/* SignUpScreen: restore navigation props for sign up and back */}
       {screen.type === "sign-up" && (
         <SignUpScreen
-          onSignUp={(role) => setScreen({ type: "home" })}
-          onBack={() => setScreen({ type: "login" })}
+          initialRole={screen.initialRole}
+          onSignUp={(role, ownerData) => {
+            if (role === "salon" && ownerData) {
+              setScreen({ type: "salon-owner-signup", ownerName: ownerData.name, ownerEmail: ownerData.email, ownerPhone: ownerData.phone });
+            } else {
+              setScreen({ type: "home" });
+            }
+          }}
+          onSelectFreelancer={() => setScreen({ type: "freelancer-signup" })}
+          onBack={() => setScreen({ type: "login-role-selection" })}
         />
       )}
 
@@ -435,9 +487,9 @@ export default function App() {
         setCurrentSalonId(newSalon.id);
         setScreen({ type: "salon-owner-verification", salonId: newSalon.id });
         toast.success("Salon registered! Waiting for verification...", { description: "Admin will review your details soon." });
-      }} onBack={() => setScreen({ type: "sign-up" })} />}
-      {screen.type === "salon-owner-verification" && <SalonOwnerVerificationScreen salonName={getCurrentSalon()?.shopName || "Your Salon"} registrationDate={getCurrentSalon()?.createdAt || new Date().toISOString()} onBack={() => { if (getCurrentSalon()?.status === "approved") setScreen({ type: "salon-owner-dashboard" }); else setScreen({ type: "login" }); }} />}
-      {screen.type === "salon-owner-dashboard" && <SalonOwnerDashboardScreen salonName={getCurrentSalon()?.shopName || "My Salon"} totalEarnings={getCurrentSalon()?.earnings?.total || 0} monthlyEarnings={getCurrentSalon()?.earnings?.thisMonth || 0} weeklyEarnings={getCurrentSalon()?.earnings?.thisWeek || 0} pendingBookings={3} locations={getCurrentSalon()?.locations || []} onNavigate={(page) => {
+      }} onBack={() => setScreen({ type: "sign-up", initialRole: "salon" })} />}
+      {screen.type === "salon-owner-verification" && <SalonOwnerVerificationScreen salonName={getCurrentSalon()?.shopName || "Your Salon"} registrationDate={getCurrentSalon()?.createdAt || new Date().toISOString()} onBack={() => { if (getCurrentSalon()?.status === "approved") setScreen({ type: "salon-owner-dashboard" }); else setScreen({ type: "salon-owner-login" }); }} />}
+      {screen.type === "salon-owner-dashboard" && <SalonOwnerDashboardScreen salonName={getCurrentSalon()?.shopName || "My Salon"} staffRole={currentStaffRole} staffName={currentStaffName || undefined} totalEarnings={getCurrentSalon()?.earnings?.total || 0} monthlyEarnings={getCurrentSalon()?.earnings?.thisMonth || 0} weeklyEarnings={getCurrentSalon()?.earnings?.thisWeek || 0} pendingBookings={3} locations={getCurrentSalon()?.locations || []} onNavigate={(page) => {
         switch (page) {
           case "calendar": setScreen({ type: "salon-calendar" }); break;
           case "staff": setScreen({ type: "salon-staff" }); break;
@@ -452,7 +504,7 @@ export default function App() {
         }
       }} onLogout={() => { setUserRole(null); setCurrentSalonId(null); setScreen({ type: "login" }); }} />}
       {screen.type === "salon-calendar" && <SalonTimingsScreen salonName={getCurrentSalon()?.shopName || "My Salon"} onBack={() => setScreen({ type: "salon-owner-dashboard" })} />}
-      {screen.type === "salon-staff" && <SalonStaffScreen salonName={getCurrentSalon()?.shopName || "My Salon"} initialStaff={getCurrentSalon()?.staff || []} locations={getCurrentSalon()?.locations || []} onStaffChange={(updatedStaff: Staff[]) => {
+      {screen.type === "salon-staff" && <SalonStaffScreen salonName={getCurrentSalon()?.shopName || "My Salon"} canManage={currentStaffRole === "owner"} initialStaff={getCurrentSalon()?.staff || []} locations={getCurrentSalon()?.locations || []} onStaffChange={(updatedStaff: Staff[]) => {
         if (!currentSalonId) return;
         setAllSalons((prev) =>
           prev.map((salon) =>
@@ -474,6 +526,32 @@ export default function App() {
             <button onClick={() => setScreen({ type: "salon-owner-dashboard" })} className="px-6 py-2 bg-[#6C4AB6] text-white rounded-lg">Back to Dashboard</button>
           </div>
         </div>
+      )}
+
+      {/* Freelancer Screens */}
+      {screen.type === "freelancer-login" && (
+        <FreelancerLoginScreen
+          onSignIn={() => setScreen({ type: "freelancer-dashboard" })}
+          onBack={() => setScreen({ type: "login-role-selection" })}
+          onSignUp={() => setScreen({ type: "freelancer-signup" })}
+        />
+      )}
+      {screen.type === "freelancer-signup" && (
+        <FreelancerSignUpScreen
+          onSignUp={(data) => {
+            setFreelancerName(data.fullName);
+            setFreelancerServices(data.servicesOffered);
+            setScreen({ type: "freelancer-dashboard" });
+          }}
+          onBack={() => setScreen({ type: "freelancer-login" })}
+        />
+      )}
+      {screen.type === "freelancer-dashboard" && (
+        <FreelancerDashboardScreen
+          freelancerName={freelancerName}
+          servicesOffered={freelancerServices}
+          onLogout={() => { setUserRole(null); setFreelancerName(""); setFreelancerServices(""); setScreen({ type: "login-role-selection" }); }}
+        />
       )}
 
       {/* Admin Screens */}

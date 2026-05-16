@@ -1,7 +1,7 @@
 import { ArrowLeft, Plus, Trash2, Edit2, Users } from "lucide-react";
 import { useState } from "react";
 import { Input } from "../components/ui/input";
-import type { Location, Staff } from "../data/mockData";
+import type { Location, Staff, StaffRole } from "../data/mockData";
 
 interface SalonStaffScreenProps {
   salonName: string;
@@ -9,10 +9,12 @@ interface SalonStaffScreenProps {
   locations: Location[];
   onStaffChange?: (staff: Staff[]) => void;
   onBack: () => void;
+  canManage?: boolean;
 }
 
 interface StaffFormData {
   name: string;
+  role: StaffRole;
   specialization: string;
   experience: string;
   phone: string;
@@ -22,11 +24,26 @@ interface StaffFormData {
 
 const emptyForm: StaffFormData = {
   name: "",
+  role: "stylist",
   specialization: "",
   experience: "",
   phone: "",
   email: "",
   locationId: "",
+};
+
+const ROLE_LABELS: Record<StaffRole, string> = {
+  owner: "Owner",
+  manager: "Manager",
+  receptionist: "Receptionist",
+  stylist: "Stylist",
+};
+
+const ROLE_COLORS: Record<StaffRole, string> = {
+  owner: "bg-purple-100 text-purple-700",
+  manager: "bg-blue-100 text-blue-700",
+  receptionist: "bg-green-100 text-green-700",
+  stylist: "bg-orange-100 text-orange-700",
 };
 
 export function SalonStaffScreen({
@@ -35,6 +52,7 @@ export function SalonStaffScreen({
   locations,
   onStaffChange,
   onBack,
+  canManage = true,
 }: SalonStaffScreenProps) {
   const [staff, setStaff] = useState<Staff[]>(initialStaff);
   const [showForm, setShowForm] = useState(false);
@@ -71,6 +89,7 @@ export function SalonStaffScreen({
 
     const staffPayload: Omit<Staff, "id" | "joinDate"> = {
       name: formData.name,
+      role: formData.role,
       specialization: formData.specialization,
       experience: formData.experience,
       phone: formData.phone,
@@ -104,6 +123,7 @@ export function SalonStaffScreen({
   const handleEdit = (member: Staff) => {
     setFormData({
       name: member.name,
+      role: member.role,
       specialization: member.specialization,
       experience: member.experience,
       phone: member.phone,
@@ -145,7 +165,7 @@ export function SalonStaffScreen({
               <p className="text-xs text-[#8A8A8A]">{salonName}</p>
             </div>
           </div>
-          {!showForm && (
+          {!showForm && canManage && (
             <button
               onClick={() => setShowForm(true)}
               disabled={locations.length === 0}
@@ -166,6 +186,21 @@ export function SalonStaffScreen({
             </h2>
 
             <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm text-[#1F1F1F] mb-2">
+                  Role <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value as StaffRole })}
+                  className="w-full bg-[#F3EEFF] border-none rounded-xl px-4 py-3 text-[#1F1F1F]"
+                >
+                  <option value="stylist">Stylist</option>
+                  <option value="receptionist">Receptionist</option>
+                  <option value="manager">Manager</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block text-sm text-[#1F1F1F] mb-2">
                   Full Name <span className="text-red-500">*</span>
@@ -307,13 +342,15 @@ export function SalonStaffScreen({
                 {locations.length === 0 && (
                   <p className="text-xs text-[#8A8A8A] mb-4">Add salon locations to start assigning staff.</p>
                 )}
-                <button
-                  onClick={() => setShowForm(true)}
-                  disabled={locations.length === 0}
-                  className="inline-flex items-center gap-2 bg-[#6C4AB6] text-white px-4 py-2 rounded-lg hover:bg-[#5C3AA6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Plus className="w-4 h-4" /> Add Staff Member
-                </button>
+                {canManage && (
+                  <button
+                    onClick={() => setShowForm(true)}
+                    disabled={locations.length === 0}
+                    className="inline-flex items-center gap-2 bg-[#6C4AB6] text-white px-4 py-2 rounded-lg hover:bg-[#5C3AA6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Plus className="w-4 h-4" /> Add Staff Member
+                  </button>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
@@ -324,7 +361,12 @@ export function SalonStaffScreen({
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-[#1F1F1F]">{member.name}</h3>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-[#1F1F1F]">{member.name}</h3>
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${ROLE_COLORS[member.role] || ROLE_COLORS.stylist}`}>
+                            {ROLE_LABELS[member.role] || "Stylist"}
+                          </span>
+                        </div>
                         <p className="text-sm text-[#8A8A8A]">{member.specialization}</p>
                         {member.experience && (
                           <p className="text-xs text-[#8A8A8A] mt-1">Experience: {member.experience}</p>
@@ -333,20 +375,22 @@ export function SalonStaffScreen({
                           {member.locationName || "Not assigned"}
                         </p>
                       </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(member)}
-                          className="p-2 hover:bg-[#F3EEFF] rounded-lg transition-colors"
-                        >
-                          <Edit2 className="w-4 h-4 text-[#6C4AB6]" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(member.id)}
-                          className="p-2 hover:bg-[#FFE0E0] rounded-lg transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4 text-[#FF6B6B]" />
-                        </button>
-                      </div>
+                      {canManage && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEdit(member)}
+                            className="p-2 hover:bg-[#F3EEFF] rounded-lg transition-colors"
+                          >
+                            <Edit2 className="w-4 h-4 text-[#6C4AB6]" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(member.id)}
+                            className="p-2 hover:bg-[#FFE0E0] rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4 text-[#FF6B6B]" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                     <div className="text-xs text-[#8A8A8A] space-y-1">
                       <p>Phone: {member.phone}</p>

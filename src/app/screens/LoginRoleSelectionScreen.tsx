@@ -1,14 +1,16 @@
-import { Sparkles, Store } from "lucide-react";
+import { Sparkles, Store, Scissors } from "lucide-react";
 
 interface LoginRoleSelectionScreenProps {
   onSelectCustomer: () => void;
   onSelectSalonOwner: () => void;
+  onSelectFreelancer: () => void;
   onBack: () => void;
 }
 
 export function LoginRoleSelectionScreen({
   onSelectCustomer,
   onSelectSalonOwner,
+  onSelectFreelancer,
   onBack,
 }: LoginRoleSelectionScreenProps) {
   return (
@@ -52,9 +54,27 @@ export function LoginRoleSelectionScreen({
                   <Store className="w-6 h-6 text-[#6C4AB6]" />
                 </div>
                 <div>
-                  <h2 className="text-[#1F1F1F] font-semibold text-lg">Services</h2>
+                  <h2 className="text-[#1F1F1F] font-semibold text-lg">Service Provider</h2>
                   <p className="text-[#8A8A8A] text-sm mt-1">
                     Sign in to manage your services, team, and earnings
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            {/* Freelancer Sign In */}
+            <button
+              onClick={onSelectFreelancer}
+              className="w-full p-6 border-2 border-[#E0D9F0] rounded-2xl hover:border-[#6C4AB6] hover:bg-[#F9F7FF] transition-all text-left"
+            >
+              <div className="flex items-start">
+                <div className="w-12 h-12 bg-[#F3EEFF] rounded-xl flex items-center justify-center mr-4">
+                  <Scissors className="w-6 h-6 text-[#6C4AB6]" />
+                </div>
+                <div>
+                  <h2 className="text-[#1F1F1F] font-semibold text-lg">Freelancer</h2>
+                  <p className="text-[#8A8A8A] text-sm mt-1">
+                    Sign in as an independent beauty professional
                   </p>
                 </div>
               </div>

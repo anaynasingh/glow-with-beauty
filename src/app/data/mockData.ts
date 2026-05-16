@@ -366,9 +366,12 @@ export interface SalonOwner {
   };
 }
 
+export type StaffRole = "owner" | "manager" | "receptionist" | "stylist";
+
 export interface Staff {
   id: number;
   name: string;
+  role: StaffRole;
   specialization: string;
   experience: string;
   phone: string;
@@ -434,8 +437,10 @@ export const salonOwners: SalonOwner[] = [
           sunday: { open: "11:00 AM", close: "8:00 PM" },
         },
         staff: [
-          { id: 1, name: "Priya Sharma", specialization: "Hair Styling", experience: "8 years", phone: "9111111111", email: "priya@glamour.com", joinDate: "2020-05-10" },
-          { id: 2, name: "Raj Malhotra", specialization: "Hair Color", experience: "5 years", phone: "9111111112", email: "raj@glamour.com", joinDate: "2022-03-15" },
+          { id: 1, name: "Priya Sharma", role: "stylist" as StaffRole, specialization: "Hair Styling", experience: "8 years", phone: "9111111111", email: "priya@glamour.com", joinDate: "2020-05-10" },
+          { id: 2, name: "Raj Malhotra", role: "stylist" as StaffRole, specialization: "Hair Color", experience: "5 years", phone: "9111111112", email: "raj@glamour.com", joinDate: "2022-03-15" },
+          { id: 10, name: "Sunita Verma", role: "manager" as StaffRole, specialization: "Salon Management", experience: "10 years", phone: "9222222220", email: "manager@glamour.com", joinDate: "2019-01-01" },
+          { id: 11, name: "Kavita Das", role: "receptionist" as StaffRole, specialization: "Customer Service", experience: "3 years", phone: "9222222221", email: "reception@glamour.com", joinDate: "2023-06-01" },
         ],
       },
       {
@@ -459,7 +464,7 @@ export const salonOwners: SalonOwner[] = [
           sunday: { open: "11:00 AM", close: "8:00 PM" },
         },
         staff: [
-          { id: 3, name: "Neha Singh", specialization: "Makeup Artist", experience: "6 years", phone: "9111111113", email: "neha@glamour.com", joinDate: "2021-07-20" },
+          { id: 3, name: "Neha Singh", role: "stylist" as StaffRole, specialization: "Makeup Artist", experience: "6 years", phone: "9111111113", email: "neha@glamour.com", joinDate: "2021-07-20" },
         ],
       },
       {
@@ -483,7 +488,7 @@ export const salonOwners: SalonOwner[] = [
           sunday: { open: "12:00 PM", close: "7:00 PM" },
         },
         staff: [
-          { id: 4, name: "Anjali Patel", specialization: "Nail Art", experience: "4 years", phone: "9111111114", email: "anjali@glamour.com", joinDate: "2023-01-10" },
+          { id: 4, name: "Anjali Patel", role: "stylist" as StaffRole, specialization: "Nail Art", experience: "4 years", phone: "9111111114", email: "anjali@glamour.com", joinDate: "2023-01-10" },
         ],
       },
     ],
@@ -497,8 +502,8 @@ export const salonOwners: SalonOwner[] = [
       sunday: { open: "11:00 AM", close: "8:00 PM" },
     },
     staff: [
-      { id: 1, name: "Priya Sharma", specialization: "Hair Styling", experience: "8 years", phone: "9111111111", email: "priya@glamour.com", joinDate: "2020-05-10", locationId: 101, locationName: "Glamour Studio - Downtown" },
-      { id: 2, name: "Raj Malhotra", specialization: "Hair Color", experience: "5 years", phone: "9111111112", email: "raj@glamour.com", joinDate: "2022-03-15", locationId: 102, locationName: "Glamour Studio - West Side" },
+      { id: 1, name: "Priya Sharma", role: "stylist" as StaffRole, specialization: "Hair Styling", experience: "8 years", phone: "9111111111", email: "priya@glamour.com", joinDate: "2020-05-10", locationId: 101, locationName: "Glamour Studio - Downtown" },
+      { id: 2, name: "Raj Malhotra", role: "stylist" as StaffRole, specialization: "Hair Color", experience: "5 years", phone: "9111111112", email: "raj@glamour.com", joinDate: "2022-03-15", locationId: 102, locationName: "Glamour Studio - West Side" },
     ],
     offers: [
       { id: 1, title: "20% off on Hair Services", description: "Get 20% discount on all hair services", discount: 20, validFrom: "2026-02-01", validTill: "2026-02-28", applicableServices: [1, 2, 3] },

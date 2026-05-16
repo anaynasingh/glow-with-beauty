@@ -1,5 +1,6 @@
-import { ArrowLeft, Clock, User, CheckCircle, XCircle } from "lucide-react";
+import { ArrowLeft, Clock, User, CheckCircle, XCircle, Plus, X } from "lucide-react";
 import { useState } from "react";
+import { Input } from "../components/ui/input";
 
 interface Booking {
   id: number;
@@ -9,6 +10,7 @@ interface Booking {
   time: string;
   status: "pending" | "confirmed" | "completed" | "cancelled";
   amount: number;
+  isWalkIn?: boolean;
 }
 
 interface SalonBookingsScreenProps {
@@ -51,6 +53,34 @@ export function SalonBookingsScreen({
   ]);
 
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [showWalkInForm, setShowWalkInForm] = useState(false);
+  const [walkInForm, setWalkInForm] = useState({ customerName: "", service: "", time: "", amount: "" });
+  const [walkInErrors, setWalkInErrors] = useState<Record<string, string>>({});
+
+  const handleAddWalkIn = () => {
+    const errors: Record<string, string> = {};
+    if (!walkInForm.customerName.trim()) errors.customerName = "Name is required";
+    if (!walkInForm.service.trim()) errors.service = "Service is required";
+    if (!walkInForm.time.trim()) errors.time = "Time is required";
+    setWalkInErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    const now = new Date();
+    const newBooking: Booking = {
+      id: Date.now(),
+      customerName: walkInForm.customerName.trim() || "Walk-in Customer",
+      service: walkInForm.service.trim(),
+      date: now.toISOString().split("T")[0],
+      time: walkInForm.time.trim(),
+      status: "confirmed",
+      amount: walkInForm.amount ? Number(walkInForm.amount) : 0,
+      isWalkIn: true,
+    };
+    setBookings([newBooking, ...bookings]);
+    setWalkInForm({ customerName: "", service: "", time: "", amount: "" });
+    setWalkInErrors({});
+    setShowWalkInForm(false);
+  };
 
   const handleStatusChange = (id: number, newStatus: Booking["status"]) => {
     setBookings(
@@ -90,6 +120,74 @@ export function SalonBookingsScreen({
 
   return (
     <div className="h-screen flex flex-col bg-gradient-to-b from-[#F8F7FF] to-white">
+      {/* Walk-in Modal */}
+      {showWalkInForm && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-end">
+          <div className="bg-white w-full rounded-t-3xl px-6 pt-6 pb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-[#1F1F1F]">Add Walk-in</h2>
+              <button
+                onClick={() => { setShowWalkInForm(false); setWalkInErrors({}); }}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F3EEFF]"
+              >
+                <X className="w-5 h-5 text-[#1F1F1F]" />
+              </button>
+            </div>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm text-[#1F1F1F] mb-1">Customer Name</label>
+                <Input
+                  type="text"
+                  placeholder="e.g. Anita Sharma (or leave blank)"
+                  value={walkInForm.customerName}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, customerName: e.target.value })}
+                  className="w-full bg-[#F3EEFF] border-none rounded-xl px-4 py-3"
+                />
+                {walkInErrors.customerName && <p className="text-red-500 text-xs mt-1">{walkInErrors.customerName}</p>}
+              </div>
+              <div>
+                <label className="block text-sm text-[#1F1F1F] mb-1">Service <span className="text-red-500">*</span></label>
+                <Input
+                  type="text"
+                  placeholder="e.g. Haircut, Facial..."
+                  value={walkInForm.service}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, service: e.target.value })}
+                  className="w-full bg-[#F3EEFF] border-none rounded-xl px-4 py-3"
+                />
+                {walkInErrors.service && <p className="text-red-500 text-xs mt-1">{walkInErrors.service}</p>}
+              </div>
+              <div>
+                <label className="block text-sm text-[#1F1F1F] mb-1">Time <span className="text-red-500">*</span></label>
+                <Input
+                  type="text"
+                  placeholder="e.g. 3:30 PM"
+                  value={walkInForm.time}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, time: e.target.value })}
+                  className="w-full bg-[#F3EEFF] border-none rounded-xl px-4 py-3"
+                />
+                {walkInErrors.time && <p className="text-red-500 text-xs mt-1">{walkInErrors.time}</p>}
+              </div>
+              <div>
+                <label className="block text-sm text-[#1F1F1F] mb-1">Amount (₹)</label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 500"
+                  value={walkInForm.amount}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, amount: e.target.value })}
+                  className="w-full bg-[#F3EEFF] border-none rounded-xl px-4 py-3"
+                />
+              </div>
+            </div>
+            <button
+              onClick={handleAddWalkIn}
+              className="w-full bg-[#6C4AB6] text-white rounded-xl py-4 font-medium active:scale-[0.98] transition-all"
+            >
+              Add Walk-in
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white border-b border-[#E0D9F0] px-6 py-4">
         <div className="flex items-center gap-4 mb-4">
@@ -99,12 +197,18 @@ export function SalonBookingsScreen({
           >
             <ArrowLeft className="w-5 h-5 text-[#1F1F1F]" />
           </button>
-          <div>
+          <div className="flex-1">
             <h1 className="text-xl font-bold text-[#1F1F1F]">
               Manage Bookings
             </h1>
             <p className="text-xs text-[#8A8A8A]">{salonName}</p>
           </div>
+          <button
+            onClick={() => setShowWalkInForm(true)}
+            className="flex items-center gap-1.5 bg-[#6C4AB6] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#5C3AA6] transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Walk-in
+          </button>
         </div>
 
         {/* Stats */}
@@ -163,6 +267,11 @@ export function SalonBookingsScreen({
                         <h3 className="font-semibold text-[#1F1F1F]">
                           {booking.customerName}
                         </h3>
+                        {booking.isWalkIn && (
+                          <span className="bg-[#FFF3CD] text-[#FF9800] text-xs font-semibold px-2 py-0.5 rounded-full">
+                            Walk-in
+                          </span>
+                        )}
                       </div>
                       <p className="text-sm text-[#8A8A8A]">
                         {booking.service}

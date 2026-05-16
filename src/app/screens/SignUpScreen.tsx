@@ -1,17 +1,19 @@
-import { Sparkles, ArrowLeft, Store } from "lucide-react";
+import { Sparkles, ArrowLeft, Store, Scissors } from "lucide-react";
 import { useState } from "react";
 import { Input } from "../components/ui/input";
 
 interface SignUpScreenProps {
-  onSignUp: (role: "user" | "salon") => void;
+  onSignUp: (role: "user" | "salon", ownerData?: { name: string; email: string; phone: string }) => void;
   onBack: () => void;
+  onSelectFreelancer?: () => void;
+  initialRole?: "user" | "salon";
 }
 
 type SignUpStep = "role-selection" | "form";
 
-export function SignUpScreen({ onSignUp, onBack }: SignUpScreenProps) {
-  const [step, setStep] = useState<SignUpStep>("role-selection");
-  const [selectedRole, setSelectedRole] = useState<"user" | "salon" | null>(null);
+export function SignUpScreen({ onSignUp, onBack, onSelectFreelancer, initialRole }: SignUpScreenProps) {
+  const [step, setStep] = useState<SignUpStep>(initialRole ? "form" : "role-selection");
+  const [selectedRole, setSelectedRole] = useState<"user" | "salon" | null>(initialRole || null);
   const [language, setLanguage] = useState<"en" | "hi">("en");
   const [formData, setFormData] = useState({
     fullName: "",
@@ -57,7 +59,11 @@ export function SignUpScreen({ onSignUp, onBack }: SignUpScreenProps) {
 
   const handleSignUp = () => {
     if (validateForm() && selectedRole) {
-      onSignUp(selectedRole);
+      if (selectedRole === "salon") {
+        onSignUp(selectedRole, { name: formData.fullName, email: formData.email, phone: formData.phone });
+      } else {
+        onSignUp(selectedRole);
+      }
     }
   };
 
@@ -72,7 +78,7 @@ export function SignUpScreen({ onSignUp, onBack }: SignUpScreenProps) {
       <div className="flex items-center justify-between pt-6 pb-4">
         <button
           onClick={() => {
-            if (step === "form") {
+            if (step === "form" && !initialRole) {
               setStep("role-selection");
               setSelectedRole(null);
             } else {
@@ -150,11 +156,29 @@ export function SignUpScreen({ onSignUp, onBack }: SignUpScreenProps) {
                       <Store className="w-6 h-6 text-[#6C4AB6]" />
                     </div>
                     <div>
-                      <h2 className="text-[#1F1F1F] font-semibold text-lg">Services</h2>
+                      <h2 className="text-[#1F1F1F] font-semibold text-lg">Service Provider</h2>
                       <p className="text-[#8A8A8A] text-sm mt-1">Manage your services, staff, and grow your business</p>
                     </div>
                   </div>
                 </button>
+
+                {/* Freelancer Role Card */}
+                {onSelectFreelancer && (
+                  <button
+                    onClick={onSelectFreelancer}
+                    className="w-full p-6 border-2 border-[#E0D9F0] rounded-2xl hover:border-[#6C4AB6] hover:bg-[#F9F7FF] transition-all text-left"
+                  >
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-[#F3EEFF] rounded-xl flex items-center justify-center mr-4">
+                        <Scissors className="w-6 h-6 text-[#6C4AB6]" />
+                      </div>
+                      <div>
+                        <h2 className="text-[#1F1F1F] font-semibold text-lg">Freelancer</h2>
+                        <p className="text-[#8A8A8A] text-sm mt-1">Register as an independent beauty professional</p>
+                      </div>
+                    </div>
+                  </button>
+                )}
               </div>
 
               {/* Back to Login */}
