@@ -14,9 +14,10 @@ import { useLanguage } from "../i18n/LanguageContext";
 interface AccountScreenProps {
   onMyBookingsClick?: () => void;
   onFavoriteSalonsClick?: () => void;
+  onLogout?: () => void;
 }
 
-export function AccountScreen({ onMyBookingsClick, onFavoriteSalonsClick }: AccountScreenProps) {
+export function AccountScreen({ onMyBookingsClick, onFavoriteSalonsClick, onLogout }: AccountScreenProps) {
   const { language, setLanguage, t } = useLanguage();
 
   const menuItems = [
@@ -107,7 +108,7 @@ export function AccountScreen({ onMyBookingsClick, onFavoriteSalonsClick }: Acco
         </div>
 
         {/* Logout Button */}
-        <button className="w-full bg-white rounded-xl p-4 flex items-center justify-center gap-3 text-red-500 active:scale-[0.98] transition-all"
+        <button onClick={onLogout} className="w-full bg-white rounded-xl p-4 flex items-center justify-center gap-3 text-red-500 active:scale-[0.98] transition-all"
           style={{ boxShadow: "0 2px 12px rgba(108, 74, 182, 0.08)" }}
         >
           <LogOut className="w-5 h-5" />

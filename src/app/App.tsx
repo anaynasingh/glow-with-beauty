@@ -441,7 +441,7 @@ export default function App() {
       }} />}
       {screen.type === "appointments" && <AppointmentsScreen appointments={bookedAppointments} onReschedule={(appointmentId) => setScreen({ type: "reschedule-appointment", appointmentId })} />}
       {/* AccountScreen: just render */}
-      {screen.type === "account" && <AccountScreen />}
+      {screen.type === "account" && <AccountScreen onLogout={() => { setUserRole(null); setScreen({ type: "login-role-selection" }); }} />}
       {screen.type === "my-bookings" && <MyBookingsScreen appointments={bookedAppointments} onBack={() => setScreen({ type: "account" })} />}
       {/* FavoriteSalonsScreen: salons, onBack, onSalonClick */}
       {screen.type === "favorite-salons" && (
@@ -502,7 +502,7 @@ export default function App() {
           case "earnings": setScreen({ type: "salon-earnings" }); break;
           case "settings": setScreen({ type: "salon-settings" }); break;
         }
-      }} onLogout={() => { setUserRole(null); setCurrentSalonId(null); setScreen({ type: "login" }); }} />}
+      }} onLogout={() => { setUserRole(null); setCurrentSalonId(null); setCurrentStaffRole("owner"); setCurrentStaffName(""); setScreen({ type: "login-role-selection" }); }} />}
       {screen.type === "salon-calendar" && <SalonTimingsScreen salonName={getCurrentSalon()?.shopName || "My Salon"} onBack={() => setScreen({ type: "salon-owner-dashboard" })} />}
       {screen.type === "salon-staff" && <SalonStaffScreen salonName={getCurrentSalon()?.shopName || "My Salon"} canManage={currentStaffRole === "owner"} initialStaff={getCurrentSalon()?.staff || []} locations={getCurrentSalon()?.locations || []} onStaffChange={(updatedStaff: Staff[]) => {
         if (!currentSalonId) return;
@@ -556,7 +556,7 @@ export default function App() {
 
       {/* Admin Screens */}
       {/* AdminDashboardScreen: just render */}
-      {screen.type === "admin-dashboard" && <AdminDashboardScreen onLogout={() => { setUserRole(null); setScreen({ type: "login" }); }} />}
+      {screen.type === "admin-dashboard" && <AdminDashboardScreen onLogout={() => { setUserRole(null); setScreen({ type: "login-role-selection" }); }} />}
 
       {/* Bottom Navigation */}
       {showBottomNavForScreen && <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />}
