@@ -13,7 +13,7 @@ export function FreelancerLoginScreen({
   onSignUp,
 }: FreelancerLoginScreenProps) {
   return (
-    <div className="h-screen flex flex-col bg-white px-6">
+    <div className="flex-1 flex flex-col bg-white px-6 overflow-y-auto">
       <div className="flex items-center pt-6 pb-4">
         <button
           onClick={onBack}

@@ -16,7 +16,7 @@ export function SalonOwnerLoginScreen({
   const [email, setEmail] = useState("");
 
   return (
-    <div className="h-screen flex flex-col bg-white px-6">
+    <div className="flex-1 flex flex-col bg-white px-6 overflow-y-auto">
       {/* Header with Back Button */}
       <div className="flex items-center pt-6 pb-4">
         <button

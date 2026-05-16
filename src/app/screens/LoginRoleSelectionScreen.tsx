@@ -14,9 +14,9 @@ export function LoginRoleSelectionScreen({
   onBack,
 }: LoginRoleSelectionScreenProps) {
   return (
-    <div className="h-screen flex flex-col bg-white px-6">
+    <div className="flex-1 flex flex-col bg-white px-6 overflow-y-auto">
       {/* Header with Back Button */}
-      <div className="flex-1 flex flex-col pb-20">
+      <div className="flex-1 flex flex-col justify-center pb-8">
         <div>
           <div className="flex flex-col items-center mb-8">
             <div className="w-20 h-20 bg-[#F3EEFF] rounded-full flex items-center justify-center mb-4">

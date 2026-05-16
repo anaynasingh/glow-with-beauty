@@ -11,7 +11,7 @@ export function LoginScreen({ onLogin, onSignUp }: LoginScreenProps) {
   const [language, setLanguage] = useState<"en" | "hi">("en");
 
   return (
-    <div className="h-screen flex flex-col bg-white px-6">
+    <div className="flex-1 flex flex-col bg-white px-6 overflow-y-auto">
       <div className="flex justify-end pt-6 pb-4">
         <div className="flex gap-2">
           <button
